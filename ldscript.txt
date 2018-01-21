@@ -5,7 +5,7 @@ SECTIONS
 	.text :
 	ALIGN(4)
 	{
-		asm/bios.o
+		asm/bios.o(.text);
 	} = 0
 
 /*
