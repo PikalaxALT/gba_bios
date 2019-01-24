@@ -3,6 +3,7 @@
 	.GLOBAL \name
 	.ARM
 	.TYPE \name, function
+	.SYNTAX divided
 .ENDM
 
 .MACRO ARM_FUNC_END name
@@ -16,11 +17,21 @@
 	.THUMB
 	.THUMB_FUNC
 	.TYPE \name, function
+	.SYNTAX unified
 .ENDM
 
 
 .MACRO THUMB_FUNC_END name
 	.SIZE \name, .-\name
+.ENDM
+
+
+.MACRO UNALIGNED_THUMB_FUNC_START name
+	.GLOBAL \name
+	.THUMB
+	.THUMB_FUNC
+	.TYPE \name, function
+	.SYNTAX unified
 .ENDM
 
 
