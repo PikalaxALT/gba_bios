@@ -169,7 +169,9 @@ swi_complete: @ 0x00000170
 	msr spsr_fc, fp
 	pop {fp, ip, lr}
 	movs pc, lr
-_0000018C:
+
+	ARM_FUNC_START sub_0000018C
+sub_0000018C:
 	mov ip, #0x4000000
 	mov r2, #4
 	strb r2, [ip, #1]
@@ -281,7 +283,7 @@ _000002C6:
 	lsrs r2, r4, #0x11
 	adds r2, r2, r4
 	strh r7, [r2, #2]
-	bl sub_00003710
+	bl swi_Halt_t
 	movs r0, #4
 	strb r0, [r4, #1]
 	strb r0, [r4]
@@ -296,7 +298,7 @@ _000002C6:
 	str r6, [r4, #4]
 	ldr r1, _000002F0
 	str r1, [r4, #8]
-	bl sub_00003718
+	bl sub_0000018C_t
 	.align 2, 0
 _000002F0: .4byte 0x85006000
 _000002F4: .4byte 0xFFFFD800
@@ -2647,18 +2649,18 @@ sub_0000170A: @ 0x0000170A
 	lsls r1, r1, #4
 	adds r4, r0, #0
 	str r0, [r7, #0x10]
-	bl sub_00003720
+	bl swi_DivArm_t
 	strb r0, [r7, #0xb]
 	ldr r0, _0000178C
 	ldr r3, _00001790
 	muls r0, r4, r0
 	adds r1, r0, r3
 	lsls r0, r3, #1
-	bl sub_00003720
+	bl swi_DivArm_t
 	movs r1, #1
 	lsls r1, r1, #0x18
 	str r0, [r7, #0x14]
-	bl sub_00003720
+	bl swi_DivArm_t
 	adds r0, #1
 	asrs r0, r0, #1
 	str r0, [r7, #0x18]
@@ -2667,7 +2669,7 @@ sub_0000170A: @ 0x0000170A
 	strh r0, [r4, #2]
 	ldr r0, [r7, #0x10]
 	ldr r1, _00001798
-	bl sub_00003720
+	bl swi_DivArm_t
 	movs r1, #1
 	lsls r1, r1, #0x10
 	subs r0, r1, r0
@@ -3028,7 +3030,7 @@ _000019FA:
 	ldr r0, [sp, #0x24]
 	movs r3, #8
 	adds r0, #0xc
-	bl sub_00003730
+	bl swi_ObjAffineSet_t
 	movs r3, #0x60
 	cmn r6, r3
 	ble _00001AAC
@@ -3135,7 +3137,7 @@ _00001AE6:
 	cmp r1, #0x50
 	bhi _00001B0A
 	movs r0, #5
-	bl sub_00003720
+	bl swi_DivArm_t
 	subs r0, #8
 	bl sub_0000039C
 	ldr r2, [sp, #0x30]
@@ -3220,7 +3222,7 @@ _00001B72:
 	blt _00001B72
 	movs r0, #6
 	adds r1, r7, #0
-	bl sub_00003720
+	bl swi_DivArm_t
 	cmp r1, #0
 	bne _00001BB2
 	ldr r1, [sp, #0x10]
@@ -3312,7 +3314,7 @@ _00001C3C:
 	ldr r1, _00001D30
 	movs r0, #1
 	strh r0, [r1, #8]
-	bl sub_00003728
+	bl swi_VBlankIntrWait_t
 	cmp r7, #0x10
 	bge _00001C62
 	ldr r1, [sp, #0x10]
@@ -3352,7 +3354,7 @@ _00001C86:
 	strb r0, [r5, #0xa]
 	bne _00001CD8
 	bl swi_SoundDriverMain
-	bl sub_00003728
+	bl swi_VBlankIntrWait_t
 	cmp r7, #0
 	bne _00001C86
 	ldrb r0, [r5, #7]
@@ -3405,7 +3407,7 @@ _00001CE2:
 	b _00001D16
 _00001CFC:
 	bl swi_SoundDriverMain
-	bl sub_00003728
+	bl swi_VBlankIntrWait_t
 	lsrs r0, r7, #1
 	bhs _00001D16
 	ldr r0, [sp, #0x14]
@@ -4705,7 +4707,7 @@ sub_000026C6: @ 0x000026C6
 	adds r3, r2, #1
 	str r3, [r1, #0x40]
 	ldrb r3, [r2]
-	b _000026AA
+	b sub_000026AA
 
 	UNALIGNED_THUMB_FUNC_START sub_000026CE
 sub_000026CE:
@@ -4834,13 +4836,13 @@ sub_0000277A: @ 0x0000277A
 	ldr r3, [r0, #0x30]
 	adds r2, r2, r3
 	ldr r3, [r2]
-	bl _000026AA
+	bl sub_000026AA
 	str r3, [r1, #0x24]
 	ldr r3, [r2, #4]
-	bl _000026AA
+	bl sub_000026AA
 	str r3, [r1, #0x28]
 	ldr r3, [r2, #8]
-	bl _000026AA
+	bl sub_000026AA
 	str r3, [r1, #0x2c]
 	bx ip
 
@@ -6313,51 +6315,13 @@ gUnknown_30D0:
 	.byte 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0xFF, 0xFF
 	.byte 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
 
-	THUMB_FUNC_START sub_00003710
-sub_00003710: @ 0x00003710
-	bx pc
-	.align 2, 0
+	THUMB_INTERWORK_VENEER swi_Halt
+	THUMB_INTERWORK_VENEER sub_0000018C
+	THUMB_INTERWORK_VENEER swi_DivArm
+	THUMB_INTERWORK_VENEER swi_VBlankIntrWait
+	THUMB_INTERWORK_VENEER swi_ObjAffineSet
 
-	ARM_FUNC_START sub_00003714
-sub_00003714: @ 0x00003714
-	b swi_Halt
-
-	THUMB_FUNC_START sub_00003718
-sub_00003718:
-	bx pc
-	.align 2, 0
-
-	ARM_FUNC_START sub_0000371C
-sub_0000371C: @ 0x0000371C
-	b _0000018C
-
-	THUMB_FUNC_START sub_00003720
-sub_00003720: @ 0x00003720
-	bx pc
-	.align 2, 0
-
-	ARM_FUNC_START sub_00003724
-sub_00003724: @ 0x00003724
-	b swi_DivArm
-
-	THUMB_FUNC_START sub_00003728
-sub_00003728: @ 0x00003728
-	bx pc
-	.align 2, 0
-
-	ARM_FUNC_START sub_0000372C
-sub_0000372C: @ 0x0000372C
-	b swi_VBlankIntrWait
-
-	THUMB_FUNC_START sub_00003730
-sub_00003730: @ 0x00003730
-	bx pc
-	.align 2, 0
-
-	ARM_FUNC_START sub_00003734
-sub_00003734: @ 0x00003734
-	b swi_ObjAffineSet
-
+	.section .rodata
 	.global gUnknown_3738
 gUnknown_3738:
 	.4byte sub_00002664
