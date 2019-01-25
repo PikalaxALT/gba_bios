@@ -59,3 +59,14 @@
 	bx r3
 	ARM_FUNC_START \name
 .ENDM
+
+@ Generates a transition to an ARM function when
+@ falling through from THUMB code.
+.MACRO THUMB_INTERWORK_FALLTHROUGH_2 name
+	THUMB_FUNC_START \name\()_t
+	\name\()_t:
+	add r3, pc, #0x4
+	mov ip, r4
+	bx r3
+	ARM_FUNC_START \name
+.ENDM

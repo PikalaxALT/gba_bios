@@ -69,6 +69,8 @@ _00000054:
 	msr spsr_fc, ip
 	pop {ip, lr}
 	subs pc, lr, #4
+
+	ARM_FUNC_START reset_vector
 reset_vector:
 	cmp lr, #0
 	moveq lr, #4
@@ -109,6 +111,8 @@ swi_SoftRest_continue: @ 0x000000C0
 	msr cpsr_fc, r0
 	mov r0, #0
 	bx lr
+
+	ARM_FUNC_START sub_000000E0
 sub_000000E0:
 	mov r0, #0xd3
 	msr cpsr_fc, r0
@@ -146,6 +150,8 @@ irq_vector:
 	ldr pc, [r0, #-4]
 	pop {r0, r1, r2, r3, ip, lr}
 	subs pc, lr, #4
+
+	ARM_FUNC_START swi_vector
 swi_vector:
 	push {fp, ip, lr}
 	ldrb ip, [lr, #-2]
@@ -170,9 +176,9 @@ swi_complete: @ 0x00000170
 	pop {fp, ip, lr}
 	movs pc, lr
 
-	ARM_FUNC_START sub_0000018C
-sub_0000018C:
-	mov ip, #REG_BASE
+	ARM_FUNC_START Dispcnt_Something_And_Custom_Halt
+Dispcnt_Something_And_Custom_Halt:
+	mov ip, #REG_DISPCNT
 	mov r2, #4
 	strb r2, [ip, #1]
 	mov r2, #8
@@ -246,16 +252,16 @@ _00000280: .4byte 0xFFFFFE00
 
 	THUMB_FUNC_START sub_00000284
 sub_00000284: @ 0x00000284
-	movs r4, #4
+	movs r4, #REG_BASE >> 24
 	lsls r4, r4, #0x18
-	movs r5, #5
+	movs r5, #PLTT >> 24
 	lsls r5, r5, #0x18
-	movs r6, #6
+	movs r6, #VRAM >> 24
 	lsls r6, r6, #0x18
 	movs r1, #0
 	movs r0, #0xc2
 	adds r2, r4, #0
-	adds r2, #0x80
+	adds r2, #REG_OFFSET_SOUNDCNT
 	strb r0, [r2, #2]
 	strb r0, [r2, #9]
 	movs r0, #0xff
@@ -268,12 +274,12 @@ sub_00000284: @ 0x00000284
 	bl sub_0000079E
 	movs r0, #0x83
 	lsls r0, r0, #7
-	strh r0, [r4, #0xc]
+	strh r0, [r4, #REG_OFFSET_BG2CNT]
 	ldr r0, _000002F4 @=0xFFFFD800
-	str r0, [r4, #0x28]
+	str r0, [r4, #REG_OFFSET_BG2X_L]
 	asrs r0, r0, #0x10
 	lsls r0, r0, #0xb
-	str r0, [r4, #0x2c]
+	str r0, [r4, #REG_OFFSET_BG2Y_L]
 	ldr r3, _000002F8 @=0x7FFF7BDE
 	str r3, [r5]
 	ldrh r3, [r5]
@@ -297,7 +303,7 @@ _000002C6:
 	str r6, [r4, #4]
 	ldr r1, _000002F0 @=0x85006000
 	str r1, [r4, #8]
-	bl sub_0000018C_t
+	bl Dispcnt_Something_And_Custom_Halt_t
 	.align 2, 0
 _000002F0: .4byte 0x85006000
 _000002F4: .4byte 0xFFFFD800
@@ -316,6 +322,8 @@ sub_00000300: @ 0x00000300
 	strheq r2, [r3, #-8]
 	strb r1, [r3, #0x202]
 	bx r0
+
+	ARM_FUNC_START swi_VBlankIntrWait
 swi_VBlankIntrWait:
 	mov r0, #1
 	mov r1, #1
@@ -1234,7 +1242,7 @@ swi_CPUSet: @ 0x00000B4C
 	push {r4, r5, lr}
 	lsls r4, r2, #0xb
 	lsrs r4, r4, #9
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _00000B96
 	movs r5, #0
 	lsrs r3, r2, #0x1b
@@ -1277,15 +1285,11 @@ _00000B96:
 	pop {r3}
 	bx r3
 
-	THUMB_FUNC_START sub_00000B9C
-sub_00000B9C: @ 0x00000B9C
-	add r3, pc, #0x4
-	mov ip, r4
-	bx r3
-	.align 2, 0
-
-	ARM_FUNC_START sub_00000BA4
-sub_00000BA4: @ 0x00000BA4
+	THUMB_INTERWORK_FALLTHROUGH_2 CheckDestInWritableRange
+CheckDestInWritableRange: @ 0x00000BA4
+@ start addr: r0
+@ size: r12
+@ Sets eq if size is 0 or if any write is outside the acceptable range.
 	cmp ip, #0
 	beq _00000BBC
 	bic ip, ip, #0xfe000000
@@ -1300,7 +1304,7 @@ swi_CPUFastSet: @ 0x00000BC4
 	push {r4, r5, r6, r7, r8, sb, sl, lr}
 	lsl sl, r2, #0xb
 	lsrs ip, sl, #9
-	bl sub_00000BA4
+	bl CheckDestInWritableRange
 	beq _00000C24
 	add sl, r1, sl, lsr #9
 	lsrs r2, r2, #0x19
@@ -1376,6 +1380,8 @@ _00000C30:
 _00000CD8:
 	pop {r4, r5, r6, r7, r8, sb, sl, fp}
 	bx lr
+
+	ARM_FUNC_START swi_ObjAffineSet
 swi_ObjAffineSet:
 	push {r8, sb, sl, fp}
 _00000CE4:
@@ -1677,7 +1683,7 @@ swi_BitUnPack: @ 0x00000F60
 	sub sp, sp, #8
 	ldrh r7, [r2]
 	movs ip, r7
-	bl sub_00000BA4
+	bl CheckDestInWritableRange
 	beq _00001004
 	ldrb r6, [r2, #2]
 	rsb sl, r6, #8
@@ -1728,7 +1734,7 @@ swi_HuffUnComp: @ 0x00001014
 	push {r4, r5, r6, r7, r8, sb, sl, fp, lr}
 	sub sp, sp, #8
 	movs ip, #0x2000000
-	bl sub_00000BA4
+	bl CheckDestInWritableRange
 	beq _000010EC
 	add r2, r0, #4
 	add r7, r2, #1
@@ -1793,7 +1799,7 @@ swi_LZ77UnCompWRAM: @ 0x000010FC
 	ldr r5, [r0], #4
 	lsr r2, r5, #8
 	movs ip, r2
-	bl sub_00000BA4
+	bl CheckDestInWritableRange
 	beq _0000118C
 _00001114:
 	cmp r2, #0
@@ -1842,7 +1848,7 @@ swi_LZ77UnCompVRAM: @ 0x00001194
 	lsr sl, r8, #8
 	mov r2, #0
 	movs ip, sl
-	bl sub_00000BA4
+	bl CheckDestInWritableRange
 	beq _00001270
 _000011B4:
 	cmp sl, #0
@@ -1906,7 +1912,7 @@ swi_RLUnCompWRAM: @ 0x00001278
 	ldm r0!, {r3}
 	lsrs r7, r3, #8
 	adds r4, r7, #0
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _000012BA
 _00001286:
 	cmp r7, #0
@@ -1951,7 +1957,7 @@ swi_RLUnCompVRAM: @ 0x000012C0
 	ldm r0!, {r3}
 	lsrs r5, r3, #8
 	adds r4, r5, #0
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _0000132A
 	movs r4, #0
 _000012D4:
@@ -2014,7 +2020,7 @@ swi_Diff8bitUnFilterWRAM: @ 0x00001332
 	push {r4, lr}
 	ldm r0!, {r4}
 	lsrs r4, r4, #8
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _00001356
 	ldrb r2, [r0]
 	.2byte 0x1C40 @ adds r0, r0, #1
@@ -2040,7 +2046,7 @@ swi_Diff8bitUnFilterVRAM: @ 0x0000135C
 	ldm r0!, {r3}
 	lsrs r5, r3, #8
 	adds r4, r5, #0
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _00001392
 	movs r4, #8
 	ldrb r7, [r0]
@@ -2073,7 +2079,7 @@ swi_Diff16bitUnFilter: @ 0x00001398
 	push {r4, lr}
 	ldm r0!, {r4}
 	lsrs r4, r4, #8
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _000013BC
 	ldrh r2, [r0]
 	.2byte 0x1C80 @ adds r0, r0, #2
@@ -2342,6 +2348,8 @@ _00001572:
 	pop {r4, r5, r6, r7}
 	pop {r3}
 	bx r3
+
+	THUMB_FUNC_START _00001578
 _00001578:
 	strh r0, [r7, #0x26]
 	ldrb r1, [r7, #8]
@@ -2821,10 +2829,10 @@ _000018E6:
 	lsrs r1, r0
 	subs r0, r1, r4
 	adds r1, r2, #0
-	bl sub_00001DB4
+	bl umull_t
 	adds r1, r0, r4
 	ldr r0, [r7, #4]
-	bl sub_00001DB4
+	bl umull_t
 	pop {r4, r5, r6, r7}
 	pop {r3}
 	bx r3
@@ -3395,18 +3403,12 @@ _00001DA6:
 	bx r3
 	.align 2, 0
 
-	THUMB_FUNC_START sub_00001DB4
-sub_00001DB4: @ 0x00001DB4
+	THUMB_FUNC_START umull_t
+umull_t: @ 0x00001DB4
 	add r2, pc, #0x0
 	bx r2
-
-	THUMB_FUNC_START sub_00001DB8
-sub_00001DB8: @ 0x00001DB8
-	movs r1, #0x90
-	b _00001EC4
-
-	ARM_FUNC_START sub_00001DBC
-sub_00001DBC: @ 0x00001DBC
+	.ARM
+	umull r2, r3, r0, r1
 	add r0, r3, #0
 	bx lr
 
@@ -3456,12 +3458,10 @@ _00001E12:
 	ldr r6, _00002108 @=0x00000630
 	ldrb r3, [r0, #5]
 	cmp r3, #0
-	beq sub_00001E74
+	beq _00001E74
 	add r1, pc, #0x0
 	bx r1
-
-	ARM_FUNC_START sub_00001E20
-sub_00001E20: @ 0x00001E20
+	.ARM
 	cmp r4, #2
 	addeq r7, r0, #0x350
 	addne r7, r5, r8
@@ -3482,11 +3482,10 @@ _00001E30:
 	strb r0, [r5], #1
 	subs r4, r4, #1
 	bgt _00001E30
-	add r0, pc, #0x2f
+	add r0, pc, #_00001E9C - . + 1 - 8
 	bx r0
-
-	THUMB_FUNC_START sub_00001E74
-sub_00001E74:
+	.THUMB
+_00001E74:
 	movs r0, #0
 	mov r1, r8
 	adds r6, r6, r5
@@ -3512,6 +3511,7 @@ _00001E8E:
 	stm r6!, {r0}
 	.2byte 0x1E49 @ subs r1, r1, #1
 	bgt _00001E8E
+_00001E9C:
 	ldr r4, [sp, #0x14]
 	ldr r0, [r4, #0x14]
 	mov sb, r0
@@ -3526,7 +3526,7 @@ _00001EB0:
 	movs r0, #0xc7
 	tst r0, r6
 	bne _00001EBE
-	b sub_000020E4
+	b _000020E4
 _00001EBE:
 	movs r0, #0x80
 	tst r0, r6
@@ -3565,7 +3565,7 @@ _00001EEE:
 _00001EFE:
 	movs r0, #0
 	strb r0, [r4]
-	b sub_000020E4
+	b _000020E4
 _00001F04:
 	movs r0, #0x40
 	tst r0, r6
@@ -3644,10 +3644,7 @@ _00001F88:
 	ldr r3, [r4, #0x28]
 	add r0, pc, #0x4
 	bx r0
-	.align 2, 0
-
-	ARM_FUNC_START sub_00001F94
-sub_00001F94: @ 0x00001F94
+	.ARM
 	str r8, [sp]
 	ldrb sl, [r4, #0xa]
 	ldrb fp, [r4, #0xb]
@@ -3746,9 +3743,8 @@ _000020D8:
 	ldr r8, [sp]
 	add r0, pc, #1
 	bx r0
-
-	THUMB_FUNC_START sub_000020E4
-sub_000020E4:
+	.THUMB
+_000020E4:
 	ldr r0, [sp, #4]
 	.2byte 0x1E40 @ subs r0, r0, #1
 	ble _000020EE
@@ -4928,11 +4924,11 @@ _000028C6:
 swi_MultiBoot: @ 0x000028CE
 	push {r1, r3, r4, r5, r6, r7, lr}
 	movs r3, #0xdf
-	add r2, pc, #0x32C
+	add r2, pc, #sub_00002C00 - . - 2
 	bl sub_00002AA4
 	adds r7, r0, #0
 	movs r4, #0xff
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _0000296E
 	lsrs r4, r7, #0x14
 	movs r3, #0xe8
@@ -4955,7 +4951,7 @@ _000028FA:
 	ldr r3, _00002C08 @=0x0003FFF8
 	ands r4, r3
 	str r4, [r7, #0xc]
-	bl sub_00000B9C
+	bl CheckDestInWritableRange_t
 	beq _0000296E
 	ldr r4, _00002C0C @=REG_DMA0
 	ldrh r0, [r4, #0xa]
@@ -5591,6 +5587,7 @@ sub_00002D70: @ 0x00002D70
 _00002D82:
 	ldr r0, [r3, #0x34]
 	mov pc, r0
+	@ noreturn
 _00002D86:
 	cmp r0, #2
 	beq _00002D82
@@ -6215,7 +6212,7 @@ gUnknown_36EC:
 	.byte 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
 
 	THUMB_INTERWORK_VENEER swi_Halt
-	THUMB_INTERWORK_VENEER sub_0000018C
+	THUMB_INTERWORK_VENEER Dispcnt_Something_And_Custom_Halt
 	THUMB_INTERWORK_VENEER swi_DivArm
 	THUMB_INTERWORK_VENEER swi_VBlankIntrWait
 	THUMB_INTERWORK_VENEER swi_ObjAffineSet
