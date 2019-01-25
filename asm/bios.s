@@ -362,7 +362,7 @@ _00000380:
 sub_0000039C: @ 0x0000039C
 	cmp r0, #0
 	bgt _000003A2
-	rsbs r0, r0, #0
+	negs r0, r0
 _000003A2:
 	bx lr
 
@@ -508,8 +508,8 @@ _00000524:
 	lsls r2, r2, #0xe
 	adds r3, r1, #0
 	lsls r3, r3, #0xe
-	rsbs r4, r0, #0
-	rsbs r5, r1, #0
+	negs r4, r0
+	negs r5, r1
 	movs r6, #0x40
 	lsls r6, r6, #8
 	lsls r7, r6, #1
@@ -703,7 +703,7 @@ sub_00000726: @ 0x00000726
 	ldr r3, _00000AC8 @=gUnknown_03003580
 	movs r2, #8
 	movs r0, #0x7e
-	rsbs r0, r0, #0
+	negs r0, r0
 _0000072E:
 	str r0, [r3, r2]
 	adds r2, #0x10
@@ -2398,7 +2398,7 @@ _000015D0:
 	movs r3, #0x80
 	cmn r1, r3
 	bge _000015DA
-	rsbs r1, r3, #0
+	negs r1, r3
 	b _000015E0
 _000015DA:
 	cmp r1, #0x7f
@@ -3024,7 +3024,7 @@ _00001A84:
 	orrs r0, r1
 	str r0, [r4]
 _00001AAC:
-	rsbs r0, r6, #0
+	negs r0, r6
 	lsls r1, r0, #0x1c
 	lsrs r1, r1, #0x1c
 	lsls r1, r1, #1
@@ -4897,7 +4897,7 @@ _00002894:
 	.2byte 0x1C64 @ adds r4, r4, #1
 	ldr r2, [r3]
 	eors r2, r4
-	rsbs r1, r3, #0
+	negs r1, r3
 	eors r2, r1
 	ldr r1, [r7, #0x54]
 	eors r2, r1
@@ -5060,7 +5060,7 @@ _000029A4:
 	subs r2, r3, r1
 	ldr r1, _00002D94 @=gUnknown_020000C0
 	adds r2, r2, r1
-	rsbs r1, r2, #0
+	negs r1, r2
 	ldr r2, [r7, #0x40]
 	eors r1, r2
 	eors r0, r1
