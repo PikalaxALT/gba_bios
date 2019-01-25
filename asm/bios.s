@@ -89,7 +89,7 @@ swi_HardReset: @ 0x0000008C
 	bl sub_000000E0
 	add r0, pc, #0x258
 	str r0, [sp, #0xfc]
-	ldr r0, _0000027C
+	ldr r0, _0000027C @=sub_00001928
 	add lr, pc, #0
 	bx r0
 
@@ -129,7 +129,7 @@ sub_000000E0:
 	THUMB_FUNC_START _0000011C
 _0000011C: @ 0x0000011C
 	movs r0, #0
-	ldr r1, _00000280
+	ldr r1, _00000280 @=0xFFFFFE00
 _00000120:
 	str r0, [r4, r1]
 	@ FIXME: Why is it assembling the wrong opcode?
@@ -270,15 +270,15 @@ sub_00000284: @ 0x00000284
 	movs r0, #0x83
 	lsls r0, r0, #7
 	strh r0, [r4, #0xc]
-	ldr r0, _000002F4
+	ldr r0, _000002F4 @=0xFFFFD800
 	str r0, [r4, #0x28]
 	asrs r0, r0, #0x10
 	lsls r0, r0, #0xb
 	str r0, [r4, #0x2c]
-	ldr r3, _000002F8
+	ldr r3, _000002F8 @=0x7FFF7BDE
 	str r3, [r5]
 	ldrh r3, [r5]
-	ldr r7, _000002FC
+	ldr r7, _000002FC @=0x00000C63
 _000002C6:
 	lsrs r2, r4, #0x11
 	adds r2, r2, r4
@@ -296,7 +296,7 @@ _000002C6:
 	add r1, sp, #8
 	str r1, [r4]
 	str r6, [r4, #4]
-	ldr r1, _000002F0
+	ldr r1, _000002F0 @=0x85006000
 	str r1, [r4, #8]
 	bl sub_0000018C_t
 	.align 2, 0
@@ -657,7 +657,7 @@ sub_000006CE: @ 0x000006CE
 	lsls r3, r3, #0x18
 	adds r0, r3, #4
 	adds r0, r0, r4
-	ldr r1, _00000AC0
+	ldr r1, _00000AC0 @=gUnknown_03000088
 	adds r1, r1, r4
 	movs r2, #0xa
 	bl swi_CPUSet
@@ -666,7 +666,7 @@ sub_000006CE: @ 0x000006CE
 	THUMB_FUNC_START sub_000006E8
 sub_000006E8: @ 0x000006E8
 	push {r4, r5, r6, lr}
-	ldr r1, _00000AC4
+	ldr r1, _00000AC4 @=gUnknown_3290
 	movs r6, #0
 _000006EE:
 	movs r4, #0xff
@@ -708,7 +708,7 @@ _00000724:
 
 	UNALIGNED_THUMB_FUNC_START sub_00000726
 sub_00000726: @ 0x00000726
-	ldr r3, _00000AC8
+	ldr r3, _00000AC8 @=gUnknown_03003580
 	movs r2, #8
 	movs r0, #0x7e
 	rsbs r0, r0, #0
@@ -804,7 +804,7 @@ sub_000007BC: @ 0x000007BC
 	push {r4, r5, r6, r7, lr}
 	movs r7, #2
 _000007C0:
-	ldr r4, _00000ACC
+	ldr r4, _00000ACC @=gUnknown_3200
 	lsls r3, r0, #1
 	adds r3, r3, r0
 	adds r3, r3, r7
@@ -830,7 +830,7 @@ _000007C0:
 	orrs r4, r3
 	adds r3, r2, r7
 	lsls r6, r3, #1
-	ldr r3, _00000AD0
+	ldr r3, _00000AD0 @=0x05000200
 	adds r3, r6, r3
 	strh r4, [r3]
 	@subs r7, r7, #1
@@ -843,9 +843,9 @@ swi_SoundBiasChange:
 	movs r1, #2
 	lsls r1, r1, #8
 	mov ip, r1
-	ldr r3, _00000AD4
+	ldr r3, _00000AD4 @=0x04000088
 	ldrh r2, [r3]
-	ldr r3, _00000AD4
+	ldr r3, _00000AD4 @=0x04000088
 	lsls r1, r2, #0x16
 	lsrs r1, r1, #0x16
 	cmp r0, #0
@@ -873,17 +873,17 @@ _0000082C:
 
 	UNALIGNED_THUMB_FUNC_START sub_0000082E
 sub_0000082E: @ 0x0000082E
-	ldr r1, _00000AD8
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	movs r2, #0x37
 	lsls r2, r2, #4
-	ldr r0, _00000ADC
+	ldr r0, _00000ADC @=gUnknown_332C
 	b _00000858
 
 	THUMB_FUNC_START sub_00000838
 sub_00000838: @ 0x00000838
-	ldr r1, _00000AD8
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	movs r2, #0x24
-	ldr r0, _00000AE0
+	ldr r0, _00000AE0 @=gUnknown_326C
 	b _00000858
 
 	THUMB_FUNC_START sub_00000840
@@ -891,24 +891,24 @@ sub_00000840: @ 0x00000840
 	movs r1, #7
 	lsls r1, r1, #0x18
 	movs r2, #0x50
-	ldr r0, _00000AE4
+	ldr r0, _00000AE4 @=gUnknown_369C
 	b _00000858
 
 	UNALIGNED_THUMB_FUNC_START sub_0000084A
 sub_0000084A: @ 0x0000084A
-	ldr r1, _00000AE8
+	ldr r1, _00000AE8 @=0x05000038
 	cmp r0, #0
 	beq _00000854
 	lsls r0, r0, #9
 	adds r1, r1, r0
 _00000854:
 	movs r2, #8
-	ldr r0, _00000AEC
+	ldr r0, _00000AEC @=gUnknown_3264
 _00000858:
 	push {r4, r5, lr}
 	adds r2, r2, r1
 _0000085C:
-	ldr r3, _00000ACC
+	ldr r3, _00000ACC @=gUnknown_3200
 	cmp r0, r3
 	blt _00000872
 	movs r3, #4
@@ -926,48 +926,48 @@ _00000872:
 sub_00000874: @ 0x00000874
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x14
-	ldr r1, _00000AF0
+	ldr r1, _00000AF0 @=gUnknown_30C0
 	ldm r1!, {r5, r7}
 	add r0, sp, #8
 	stm r0!, {r5, r7}
-	ldr r0, _00000AF4
-	ldr r3, _00000AF8
+	ldr r0, _00000AF4 @=0x0BFE1FE0
+	ldr r3, _00000AF8 @=0x080000B4
 	ldrb r3, [r3]
 	lsrs r3, r3, #7
 	bne _0000088C
-	ldr r0, _00000AFC
+	ldr r0, _00000AFC @=0x0BFFFFE0
 _0000088C:
-	ldr r1, _00000AD8
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	movs r2, #0xa
 	bl swi_CPUSet
 	bl sub_000005A4
-	ldr r1, _00000AC0
+	ldr r1, _00000AC0 @=gUnknown_03000088
 	adds r3, r1, #0
 	adds r3, #0xae
 	ldrb r0, [r3]
 	cmp r0, #0x96
 	beq _000008B0
-	ldr r2, _00000B00
+	ldr r2, _00000B00 @=0x85000027
 	asrs r3, r2, #0x1f
 	str r3, [sp, #0x10]
 	add r0, sp, #0x10
 	bl swi_CPUSet
 _000008B0:
 	bl sub_0000082E
-	ldr r0, _00000AD8
-	ldr r1, _00000B04
+	ldr r0, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000B04 @=gUnknown_03001564
 	bl __swi_HuffUnComp
-	ldr r0, _00000B04
-	ldr r1, _00000AD8
+	ldr r0, _00000B04 @=gUnknown_03001564
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	bl sub_000010F8
 	movs r7, #0
 _000008C6:
 	lsls r0, r7, #2
 	str r0, [sp, #0xc]
-	ldr r2, _00000AD8
+	ldr r2, _00000AD8 @=gUnknown_03000564
 	lsls r0, r7, #8
 	adds r0, r0, r2
-	ldr r3, _00000B08
+	ldr r3, _00000B08 @=0x06000040
 	lsls r1, r7, #0xa
 	adds r1, r1, r3
 	add r2, sp, #8
@@ -980,14 +980,14 @@ _000008C6:
 _000008E4:
 	movs r4, #3
 _000008E6:
-	ldr r3, _00000B08
+	ldr r3, _00000B08 @=0x06000040
 	lsls r0, r7, #1
 	adds r0, r0, r4
 	lsls r0, r0, #8
 	adds r0, r0, r3
-	ldr r3, _00000B0C
+	ldr r3, _00000B0C @=gUnknown_30B0
 	ldrh r2, [r3, r7]
-	ldr r3, _00000B10
+	ldr r3, _00000B10 @=0x06010000
 	lsls r1, r4, #4
 	adds r1, r1, r2
 	lsls r1, r1, #6
@@ -1000,18 +1000,18 @@ _000008E6:
 	@subs r7, r7, #2
 	.2byte 0x1EBF
 	bge _000008E4
-	ldr r0, _00000AC0
+	ldr r0, _00000AC0 @=gUnknown_03000088
 	bl sub_0000094A
 	bl sub_00000974
 	bl sub_00000982
 	movs r2, #0x20
 	str r2, [sp, #4]
-	ldr r1, _00000B14
+	ldr r1, _00000B14 @=0x0600B880
 	str r1, [sp]
 	movs r3, #4
 	movs r2, #4
-	ldr r1, _00000B18
-	ldr r0, _00000B1C
+	ldr r1, _00000B18 @=0x00000202
+	ldr r0, _00000B1C @=0x00007271
 	bl sub_0000079E
 	movs r1, #5
 	lsls r1, r1, #0x18
@@ -1028,37 +1028,37 @@ _000008E6:
 	UNALIGNED_THUMB_FUNC_START sub_0000094A
 sub_0000094A: @ 0x0000094A
 	push {r0, r4, r5, r6, r7, lr}
-	ldr r4, _00000B20
+	ldr r4, _00000B20 @=gUnknown_03007FF0 + 7
 	strb r0, [r4]
 	bl sub_00000838
 	ldr r0, [sp]
-	ldr r1, _00000B24
+	ldr r1, _00000B24 @=gUnknown_03000588
 	movs r2, #0x4e
 	bl swi_CPUSet
-	ldr r0, _00000AD8
-	ldr r1, _00000B04
+	ldr r0, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000B04 @=gUnknown_03001564
 	bl __swi_HuffUnComp
-	ldr r0, _00000B04
-	ldr r2, _00000B28
+	ldr r0, _00000B04 @=gUnknown_03001564
+	ldr r2, _00000B28 @=0x0000D082
 	str r2, [r0]
-	ldr r1, _00000AD8
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	bl swi_Diff16bitUnFilter
 	pop {r0, r4, r5, r6, r7, pc}
 
 	THUMB_FUNC_START sub_00000974
 sub_00000974: @ 0x00000974
 	push {r0, r4, r5, r6, r7, lr}
-	ldr r0, _00000AD8
-	ldr r1, _00000B04
-	ldr r2, _00000B2C
+	ldr r0, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000B04 @=gUnknown_03001564
+	ldr r2, _00000B2C @=gUnknown_30C8
 	bl __swi_BitUnPack
 	pop {r0, r4, r5, r6, r7, pc}
 
 	UNALIGNED_THUMB_FUNC_START sub_00000982
 sub_00000982: @ 0x00000982
 	push {r0, r4, r5, r6, r7, lr}
-	ldr r6, _00000B04
-	ldr r4, _00000B30
+	ldr r6, _00000B04 @=gUnknown_03001564
+	ldr r4, _00000B30 @=0x060024C0
 	movs r7, #2
 _0000098A:
 	movs r5, #0x34
@@ -1075,9 +1075,9 @@ _0000098C:
 	movs r7, #3
 _0000099C:
 	lsls r3, r7, #0xa
-	ldr r0, _00000B34
+	ldr r0, _00000B34 @=0x06002040
 	adds r0, r0, r3
-	ldr r1, _00000B38
+	ldr r1, _00000B38 @=0x06016800
 	adds r1, r1, r3
 	movs r2, #1
 	lsls r2, r2, #8
@@ -1087,7 +1087,7 @@ _0000099C:
 	bgt _0000099C
 	mov r0, sp
 	str r7, [r0]
-	ldr r1, _00000AD8
+	ldr r1, _00000AD8 @=gUnknown_03000564
 	movs r2, #8
 	lsls r2, r2, #8
 	bl _00000AB2
@@ -1098,7 +1098,7 @@ swi_RegisterRamReset: @ 0x000009C2
 	push {r4, r5, r6, r7, lr}
 	sub sp, #4
 	adds r7, r0, #0
-	ldr r5, _00000B3C
+	ldr r5, _00000B3C @=0x85000000
 	movs r4, #4
 	lsls r4, r4, #0x18
 	movs r3, #0
@@ -1137,7 +1137,7 @@ swi_RegisterRamReset: @ 0x000009C2
 	strh r0, [r4, #0x36]
 _00000A18:
 	movs r6, #0x20
-	ldr r1, _00000B40
+	ldr r1, _00000B40 @=0x04000110
 	movs r2, #8
 	bl sub_00000AAC
 	lsrs r2, r4, #0xb
@@ -1151,7 +1151,7 @@ _00000A18:
 	beq _00000A6A
 	movs r1, #0x80
 	adds r1, r1, r4
-	ldr r0, _00000B44
+	ldr r0, _00000B44 @=0x880E0000
 	strb r0, [r1, #4]
 	strb r1, [r1, #4]
 	str r0, [r1]
@@ -1196,7 +1196,7 @@ _00000A6A:
 	movs r6, #2
 	movs r1, #3
 	lsls r1, r1, #0x18
-	ldr r2, _00000B48
+	ldr r2, _00000B48 @=0x00001F80
 	bl sub_00000AAC
 	add sp, #4
 	pop {r4, r5, r6, r7}
@@ -2191,7 +2191,7 @@ _000013D6:
 	adds r0, r7, #0
 	bl sub_000023B0
 	str r5, [r7, #0x2c]
-	ldr r0, _00001424
+	ldr r0, _00001424 @=0x80000000
 	strb r4, [r7, #8]
 	str r0, [r7, #4]
 	movs r0, #0
@@ -2205,8 +2205,8 @@ _000013E8:
 _000013F2:
 	cmp r4, #0
 	bgt _000013E8
-	ldr r1, _00001428
-	ldr r4, _0000142C
+	ldr r1, _00001428 @=gUnknown_03007FC0
+	ldr r4, _0000142C @=0x68736D53
 	ldr r1, [r1, #0x30]
 	ldr r2, [r1]
 	cmp r2, r4
@@ -2221,7 +2221,7 @@ _000013F2:
 	str r2, [r7, #0x3c]
 	str r0, [r1, #0x20]
 _00001414:
-	ldr r0, _00001430
+	ldr r0, _00001430 @=sub_00002148
 	str r7, [r1, #0x24]
 	str r0, [r1, #0x20]
 	str r4, [r1]
@@ -2241,7 +2241,7 @@ swi_MusicPlayerStart: @ 0x00001434
 	push {r4, r5, r6, r7, lr}
 	adds r7, r0, #0
 	ldr r0, [r0, #0x34]
-	ldr r3, _000014BC
+	ldr r3, _000014BC @=0x68736D53
 	adds r4, r1, #0
 	cmp r0, r3
 	bne _000014B4
@@ -2302,7 +2302,7 @@ _000014A0:
 	blo _000014B0
 	bl swi_SoundDriverMode
 _000014B0:
-	ldr r0, _000014BC
+	ldr r0, _000014BC @=0x68736D53
 	str r0, [r7, #0x34]
 _000014B4:
 	pop {r4, r5, r6, r7}
@@ -2316,7 +2316,7 @@ swi_MusicPlayerStop: @ 0x000014C0
 	push {r4, r5, r6, r7, lr}
 	adds r7, r0, #0
 	ldr r0, [r0, #0x34]
-	ldr r6, _000014F8
+	ldr r6, _000014F8 @=0x68736D53
 	cmp r0, r6
 	bne _000014F0
 	adds r0, #1
@@ -2348,7 +2348,7 @@ _000014F8: .4byte 0x68736D53
 	THUMB_FUNC_START swi_MusicPlayerContinue
 swi_MusicPlayerContinue: @ 0x000014FC
 	ldr r2, [r0, #0x34]
-	ldr r1, _00001510
+	ldr r1, _00001510 @=0x68736D53
 	cmp r2, r1
 	bne _0000150E
 	ldr r2, [r0, #4]
@@ -2365,7 +2365,7 @@ _00001510: .4byte 0x68736D53
 swi_MusicPlayerFadeOut: @ 0x00001514
 	push {r7}
 	ldr r7, [r0, #0x34]
-	ldr r2, _00001530
+	ldr r2, _00001530 @=0x68736D53
 	cmp r7, r2
 	bne _0000152A
 	strh r1, [r0, #0x26]
@@ -2537,7 +2537,7 @@ _00001640:
 	strb r2, [r7, #8]
 	strb r1, [r7, #9]
 _00001646:
-	ldr r2, _00001660
+	ldr r2, _00001660 @=gUnknown_03007FC0
 	adds r1, r7, #0
 	ldr r2, [r2, #0x30]
 	ldr r2, [r2, #0x3c]
@@ -2556,14 +2556,14 @@ _00001660: .4byte gUnknown_03007FC0
 swi_SoundDriverInit: @ 0x00001664
 	push {r3, r7, lr}
 	adds r7, r0, #0
-	ldr r1, _000016DC
+	ldr r1, _000016DC @=0x040000C0
 	movs r0, #0
 	strh r0, [r1, #6]
 	strh r0, [r1, #0x12]
-	ldr r0, _000016E0
+	ldr r0, _000016E0 @=0x04000080
 	movs r2, #0x8f
 	strh r2, [r0, #4]
-	ldr r2, _000016E4
+	ldr r2, _000016E4 @=0x0000A90E
 	strh r2, [r0, #2]
 	ldrb r2, [r0, #9]
 	lsls r2, r2, #0x1a
@@ -2575,16 +2575,16 @@ swi_SoundDriverInit: @ 0x00001664
 	strb r2, [r0, #9]
 	adds r2, r7, r3
 	str r2, [r0, #0x3c]
-	ldr r0, _000016E8
+	ldr r0, _000016E8 @=0x040000A0
 	movs r3, #0x13
 	lsls r3, r3, #7
 	str r0, [r1]
 	adds r0, r7, r3
 	str r0, [r1, #8]
-	ldr r0, _000016EC
-	ldr r2, _000016F4
+	ldr r0, _000016EC @=0x040000A4
+	ldr r2, _000016F4 @=0x050003EC
 	str r0, [r1, #0xc]
-	ldr r0, _000016F0
+	ldr r0, _000016F0 @=gUnknown_03007FC0
 	str r7, [r0, #0x30]
 	movs r0, #0
 	str r0, [sp]
@@ -2595,19 +2595,19 @@ swi_SoundDriverInit: @ 0x00001664
 	strb r0, [r7, #6]
 	movs r0, #0xf
 	strb r0, [r7, #7]
-	ldr r0, _000016F8
+	ldr r0, _000016F8 @=sub_00002424
 	str r0, [r7, #0x38]
-	ldr r0, _000016FC
+	ldr r0, _000016FC @=sub_00001708
 	str r0, [r7, #0x28]
 	str r0, [r7, #0x2c]
 	str r0, [r7, #0x30]
 	str r0, [r7, #0x3c]
-	ldr r0, _00001700
+	ldr r0, _00001700 @=gUnknown_3738
 	str r0, [r7, #0x34]
 	movs r0, #1
 	lsls r0, r0, #0x12
 	bl sub_0000170A
-	ldr r0, _00001704
+	ldr r0, _00001704 @=0x68736D53
 	str r0, [r7]
 	pop {r3, r7}
 	pop {r3}
@@ -2632,14 +2632,14 @@ sub_00001708: @ 0x00001708
 	UNALIGNED_THUMB_FUNC_START sub_0000170A
 sub_0000170A: @ 0x0000170A
 	push {r4, r7, lr}
-	ldr r1, _00001784
+	ldr r1, _00001784 @=gUnknown_03007FC0
 	movs r3, #0xf
 	lsls r3, r3, #0x10
 	ands r0, r3
 	ldr r7, [r1, #0x30]
 	lsrs r0, r0, #0x10
 	strb r0, [r7, #8]
-	ldr r1, _00001788
+	ldr r1, _00001788 @=gUnknown_31E8
 	lsls r0, r0, #1
 	adds r0, r0, r1
 	subs r0, #0x20
@@ -2650,8 +2650,8 @@ sub_0000170A: @ 0x0000170A
 	str r0, [r7, #0x10]
 	bl swi_DivArm_t
 	strb r0, [r7, #0xb]
-	ldr r0, _0000178C
-	ldr r3, _00001790
+	ldr r0, _0000178C @=0x00091D1B
+	ldr r3, _00001790 @=0x00001388
 	muls r0, r4, r0
 	adds r1, r0, r3
 	lsls r0, r3, #1
@@ -2663,11 +2663,11 @@ sub_0000170A: @ 0x0000170A
 	adds r0, #1
 	asrs r0, r0, #1
 	str r0, [r7, #0x18]
-	ldr r4, _00001794
+	ldr r4, _00001794 @=0x04000100
 	movs r0, #0
 	strh r0, [r4, #2]
 	ldr r0, [r7, #0x10]
-	ldr r1, _00001798
+	ldr r1, _00001798 @=0x00044940
 	bl swi_DivArm_t
 	movs r1, #1
 	lsls r1, r1, #0x10
@@ -2700,8 +2700,8 @@ _00001798: .4byte 0x00044940
 	THUMB_FUNC_START swi_SoundDriverMode
 swi_SoundDriverMode: @ 0x0000179C
 	push {r4, r5, r7, lr}
-	ldr r1, _00001818
-	ldr r5, _0000181C
+	ldr r1, _00001818 @=gUnknown_03007FC0
+	ldr r5, _0000181C @=0x68736D53
 	ldr r7, [r1, #0x30]
 	ldr r1, [r7]
 	cmp r1, r5
@@ -2744,7 +2744,7 @@ _000017E2:
 	beq _000017FE
 	movs r3, #3
 	lsls r3, r3, #0x14
-	ldr r2, _00001820
+	ldr r2, _00001820 @=0x04000080
 	ands r1, r3
 	ldrb r3, [r2, #9]
 	lsrs r1, r1, #0xe
@@ -2774,8 +2774,8 @@ _00001820: .4byte 0x04000080
 	THUMB_FUNC_START swi_SoundChannelClear
 swi_SoundChannelClear: @ 0x00001824
 	push {r4, r5, r6, r7, lr}
-	ldr r0, _00001870
-	ldr r6, _00001874
+	ldr r0, _00001870 @=gUnknown_03007FC0
+	ldr r6, _00001874 @=0x68736D53
 	ldr r7, [r0, #0x30]
 	ldr r0, [r7]
 	cmp r0, r6
@@ -2820,8 +2820,8 @@ _00001874: .4byte 0x68736D53
 	THUMB_FUNC_START swi_SoundDriverVSyncOff
 swi_SoundDriverVSyncOff: @ 0x00001878
 	push {r3, r7, lr}
-	ldr r0, _000018B8
-	ldr r3, _000018BC
+	ldr r0, _000018B8 @=gUnknown_03007FC0
+	ldr r3, _000018BC @=0x68736D53
 	ldr r7, [r0, #0x30]
 	ldr r0, [r7]
 	cmp r0, r3
@@ -2832,7 +2832,7 @@ swi_SoundDriverVSyncOff: @ 0x00001878
 	adds r0, #1
 	str r0, [r7]
 	movs r0, #0
-	ldr r1, _000018C0
+	ldr r1, _000018C0 @=0x040000C0
 	movs r3, #0x35
 	strh r0, [r1, #6]
 	strh r0, [r1, #0x12]
@@ -2841,7 +2841,7 @@ swi_SoundDriverVSyncOff: @ 0x00001878
 	adds r1, r7, r3
 	str r0, [sp]
 	mov r0, sp
-	ldr r2, _000018C4
+	ldr r2, _000018C4 @=0x05000318
 	bl swi_CPUSet
 	ldr r0, [r7]
 	subs r0, #1
@@ -2859,7 +2859,7 @@ _000018C4: .4byte 0x05000318
 	THUMB_FUNC_START swi_SoundDriverVSyncOn
 swi_SoundDriverVSyncOn: @ 0x000018C8
 	movs r1, #0x5b
-	ldr r0, _000018D4
+	ldr r0, _000018D4 @=0x040000C0
 	lsls r1, r1, #9
 	strh r1, [r0, #6]
 	strh r1, [r0, #0x12]
@@ -2874,10 +2874,10 @@ swi_MIDIKey2Freq: @ 0x000018D8
 	adds r7, r0, #0
 	cmp r1, #0xb2
 	ble _000018E6
-	ldr r2, _00001920
+	ldr r2, _00001920 @=0xFF000000
 	movs r1, #0xb2
 _000018E6:
-	ldr r0, _00001924
+	ldr r0, _00001924 @=gUnknown_3104
 	ldrb r3, [r0, r1]
 	lsls r4, r3, #0x1c
 	lsrs r4, r4, #0x1c
@@ -2922,12 +2922,12 @@ sub_00001928: @ 0x00001928
 	str r1, [sp, #0x10]
 	str r1, [sp]
 	bl swi_RegisterRamReset
-	ldr r0, _00001D2C
+	ldr r0, _00001D2C @=0x04000300
 	movs r5, #1
 	strb r5, [r0]
 	movs r0, #1
 	bl swi_SoundBiasChange
-	ldr r6, _00001D30
+	ldr r6, _00001D30 @=0x04000200
 	movs r0, #8
 	lsls r1, r0, #0x17
 	strh r5, [r6]
@@ -2953,21 +2953,21 @@ _00001962:
 	movs r0, #0x3b
 	lsls r0, r0, #9
 	str r0, [r1, #0x3c]
-	ldr r1, _00001D38
-	ldr r0, _00001D34
+	ldr r1, _00001D38 @=0x04000040
+	ldr r0, _00001D34 @=0x10003F5F
 	str r0, [r1, #0x10]
 	bl sub_00000726
 	bl sub_00002D68
-	ldr r0, _00001D3C
+	ldr r0, _00001D3C @=gUnknown_03003B2C
 	bl swi_SoundDriverInit
-	ldr r0, _00001D40
+	ldr r0, _00001D40 @=0x00940A00
 	bl swi_SoundDriverMode
-	ldr r1, _00001D44
-	ldr r0, _00001D48
+	ldr r1, _00001D44 @=gUnknown_0300372C
+	ldr r0, _00001D48 @=gUnknown_030036EC
 	movs r2, #6
 	bl swi_MusicPlayerOpen
-	ldr r1, _00001D4C
-	ldr r0, _00001D50
+	ldr r1, _00001D4C @=gUnknown_0300394C
+	ldr r0, _00001D50 @=gUnknown_0300390C
 	movs r2, #6
 	bl swi_MusicPlayerOpen
 	b _00001C62
@@ -2983,16 +2983,16 @@ _000019B8:
 	cmp r0, r7
 	str r2, [sp, #0x30]
 	bgt _000019D2
-	ldr r3, _00001D54
+	ldr r3, _00001D54 @=gUnknown_03003564
 	lsls r1, r5, #2
 	ldr r2, [r3, r1]
 	adds r2, #1
 	str r2, [r3, r1]
 _000019D2:
-	ldr r3, _00001D54
+	ldr r3, _00001D54 @=gUnknown_03003564
 	lsls r1, r5, #2
 	ldr r2, [r3, r1]
-	ldr r3, _00001D58
+	ldr r3, _00001D58 @=gUnknown_03003580
 	lsls r1, r5, #4
 	adds r1, r1, r3
 	lsls r4, r5, #3
@@ -3016,14 +3016,14 @@ _000019FA:
 	bl sub_00000738
 	movs r0, #0x14
 	muls r0, r5, r0
-	ldr r1, _00001D5C
+	ldr r1, _00001D5C @=gUnknown_030035F0
 	adds r1, r0, r1
 	str r1, [sp, #0x28]
 	str r1, [sp, #0x24]
 	ldr r0, [sp, #0x18]
 	bl sub_00000768
 	lsls r0, r5, #5
-	ldr r3, _00001D60
+	ldr r3, _00001D60 @=0x07000026
 	movs r2, #1
 	adds r1, r0, r3
 	ldr r0, [sp, #0x24]
@@ -3056,7 +3056,7 @@ _00001A44:
 	orrs r0, r3
 	strh r0, [r4]
 	ldr r0, [sp, #0x2c]
-	ldr r2, _00001D64
+	ldr r2, _00001D64 @=gUnknown_369C
 	adds r0, r0, r2
 	ldrh r2, [r4, #4]
 	ldrh r0, [r0, #4]
@@ -3080,7 +3080,7 @@ _00001A76:
 	str r2, [r4]
 _00001A84:
 	ldr r2, [sp, #0x28]
-	ldr r3, _00001D68
+	ldr r3, _00001D68 @=0xFE00FFFF
 	ldrh r2, [r2, #8]
 	adds r0, r2, r0
 	ldr r2, [r4]
@@ -3116,7 +3116,7 @@ _00001AC2:
 	subs r0, #0x38
 	cmp r0, #0x22
 	bhi _00001AE6
-	ldr r0, _00001D6C
+	ldr r0, _00001D6C @=gUnknown_36EC
 	ldr r2, [sp, #0x1c]
 	adds r0, r0, r2
 	subs r0, #0x40
@@ -3167,8 +3167,8 @@ _00001B1C:
 	str r0, [sp, #4]
 	movs r0, #0xa
 	str r0, [sp, #0xc]
-	ldr r0, _00001D70
-	ldr r1, _00001D38
+	ldr r0, _00001D70 @=0x10001F5F
+	ldr r1, _00001D38 @=0x04000040
 	str r0, [r1, #0x10]
 	b _00001BC4
 _00001B38:
@@ -3193,12 +3193,12 @@ _00001B4E:
 	lsrs r0, r0, #0x1e
 	lsls r0, r0, #8
 	orrs r0, r1
-	ldr r1, _00001D68
+	ldr r1, _00001D68 @=0xFE00FFFF
 	ands r1, r0
 	movs r3, #1
 	lsls r3, r3, #0x12
 	adds r0, r0, r3
-	ldr r3, _00001D68
+	ldr r3, _00001D68 @=0xFE00FFFF
 	bics r0, r3
 	orrs r0, r1
 	str r0, [r4, #0x48]
@@ -3232,16 +3232,16 @@ _00001B72:
 	lsls r0, r0, #8
 	orrs r0, r1
 	str r1, [sp, #0x10]
-	ldr r1, _00001D38
+	ldr r1, _00001D38 @=0x04000040
 	strh r0, [r1, #0x12]
 _00001BB2:
-	ldr r0, _00001D74
-	ldr r1, _00001D38
+	ldr r0, _00001D74 @=0x00003F27
+	ldr r1, _00001D38 @=0x04000040
 	strh r0, [r1, #0xa]
-	ldr r0, _00001D78
+	ldr r0, _00001D78 @=0x00009802
 	b _00001BBE
 _00001BBC:
-	ldr r0, _00001D7C
+	ldr r0, _00001D7C @=0x00001002
 _00001BBE:
 	movs r1, #1
 	lsls r1, r1, #0x1a
@@ -3260,14 +3260,14 @@ _00001BC4:
 	bl swi_SoundDriverMain
 	cmp r7, #0x10
 	bne _00001BE4
-	ldr r1, _00001D80
+	ldr r1, _00001D80 @=gUnknown_3908
 	b _00001BEA
 _00001BE4:
 	cmp r7, #0xa2
 	bne _00001BF0
-	ldr r1, _00001D84
+	ldr r1, _00001D84 @=gUnknown_39C0
 _00001BEA:
-	ldr r0, _00001D48
+	ldr r0, _00001D48 @=gUnknown_030036EC
 	bl swi_MusicPlayerStart
 _00001BF0:
 	subs r0, r7, #7
@@ -3277,17 +3277,17 @@ _00001BF0:
 	ldr r0, [sp, #0x20]
 	cmp r0, #0
 	bne _00001C1C
-	ldr r0, _00001D88
+	ldr r0, _00001D88 @=gUnknown_03000064
 	movs r3, #1
 	ldr r0, [r0, #0x24]
 	cmn r0, r3
 	beq _00001C1C
-	ldr r0, _00001D8C
+	ldr r0, _00001D8C @=0x04000130
 	ldrb r0, [r0]
 	cmp r0, #0xf3
 	bne _00001C1C
-	ldr r1, _00001D90
-	ldr r0, _00001D50
+	ldr r1, _00001D90 @=gUnknown_389C
+	ldr r0, _00001D50 @=gUnknown_0300390C
 	bl swi_MusicPlayerStart
 	movs r0, #1
 	str r0, [sp, #0x20]
@@ -3310,7 +3310,7 @@ _00001C32:
 	bl sub_000007BC
 _00001C3C:
 	bl sub_00002B34
-	ldr r1, _00001D30
+	ldr r1, _00001D30 @=0x04000200
 	movs r0, #1
 	strh r0, [r1, #8]
 	bl swi_VBlankIntrWait_t
@@ -3324,7 +3324,7 @@ _00001C3C:
 	lsls r0, r0, #8
 	orrs r0, r1
 	str r1, [sp, #0x10]
-	ldr r1, _00001D38
+	ldr r1, _00001D38 @=0x04000040
 	strh r0, [r1, #0x12]
 _00001C62:
 	adds r7, #1
@@ -3332,12 +3332,12 @@ _00001C62:
 	bgt _00001C6A
 	b _000019B4
 _00001C6A:
-	ldr r0, _00001D94
+	ldr r0, _00001D94 @=gUnknown_03000088
 	bl sub_000006E8
 	movs r6, #0
 	adds r7, r0, #0
 	cmp r0, #0
-	ldr r5, _00001D98
+	ldr r5, _00001D98 @=0x03FFFFF0
 	bne _00001C80
 	ldr r0, [sp, #0x20]
 	cmp r0, #0
@@ -3362,14 +3362,14 @@ _00001C86:
 	ldrb r0, [r5, #0xb]
 	cmp r0, #0
 	beq _00001CC2
-	ldr r0, _00001D8C
+	ldr r0, _00001D8C @=0x04000130
 	ldrb r0, [r0]
 	mvns r0, r0
 	movs r3, #0xf3
 	ands r0, r3
 	beq _00001C86
-	ldr r1, _00001D9C
-	ldr r0, _00001D50
+	ldr r1, _00001D9C @=gUnknown_3818
+	ldr r0, _00001D50 @=gUnknown_0300390C
 	bl swi_MusicPlayerStart
 	strb r6, [r5, #0xb]
 	b _00001C86
@@ -3385,8 +3385,8 @@ _00001CC2:
 	bl sub_000007BC
 	b _00001C86
 _00001CD8:
-	ldr r1, _00001DA0
-	ldr r0, _00001D38
+	ldr r1, _00001DA0 @=0x00103FBF
+	ldr r0, _00001D38 @=0x04000040
 	str r1, [r0, #0x10]
 	str r6, [r0, #0x14]
 	movs r1, #0
@@ -3488,9 +3488,9 @@ sub_00001DBC: @ 0x00001DBC
 
 	THUMB_FUNC_START swi_SoundDriverMain
 swi_SoundDriverMain: @ 0x00001DC4
-	ldr r0, _00002140
+	ldr r0, _00002140 @=gUnknown_03007FF0
 	ldr r0, [r0]
-	ldr r2, _00002144
+	ldr r2, _00002144 @=0x68736D53
 	ldr r3, [r0]
 	cmp r2, r3
 	beq _00001DD2
@@ -3518,7 +3518,7 @@ _00001DF2:
 	ldr r0, [sp, #0x14]
 	ldr r3, [r0, #0x10]
 	mov r8, r3
-	ldr r5, _00002104
+	ldr r5, _00002104 @=0x00000350
 	adds r5, r5, r0
 	ldrb r4, [r0, #4]
 	subs r7, r4, #1
@@ -3530,7 +3530,7 @@ _00001DF2:
 	adds r5, r5, r2
 _00001E12:
 	str r5, [sp, #8]
-	ldr r6, _00002108
+	ldr r6, _00002108 @=0x00000630
 	ldrb r3, [r0, #5]
 	cmp r3, #0
 	beq sub_00001E74
@@ -3839,7 +3839,7 @@ sub_000020E4:
 	b _00001EB0
 _000020EE:
 	ldr r0, [sp, #0x14]
-	ldr r3, _00002144
+	ldr r3, _00002144 @=0x68736D53
 	str r3, [r0]
 	add sp, #0x18
 	pop {r0, r1, r2, r3, r4, r5, r6, r7}
@@ -3858,9 +3858,9 @@ _00002108: .4byte 0x00000630
 
 	THUMB_FUNC_START swi_SoundDriverVSync
 swi_SoundDriverVSync: @ 0x0000210C
-	ldr r0, _00002140
+	ldr r0, _00002140 @=gUnknown_03007FF0
 	ldr r0, [r0]
-	ldr r2, _00002144
+	ldr r2, _00002144 @=0x68736D53
 	ldr r3, [r0]
 	cmp r2, r3
 	bne _00002136
@@ -3874,8 +3874,8 @@ swi_SoundDriverVSync: @ 0x0000210C
 	movs r0, #0
 	movs r1, #0xb6
 	lsls r1, r1, #8
-	ldr r2, _00002138
-	ldr r3, _0000213C
+	ldr r2, _00002138 @=0x040000C6
+	ldr r3, _0000213C @=0x040000D2
 	strh r0, [r2]
 	strh r0, [r3]
 	strh r1, [r2]
@@ -3890,7 +3890,7 @@ _00002144: .4byte 0x68736D53
 
 	THUMB_FUNC_START sub_00002148
 sub_00002148: @ 0x00002148
-	ldr r2, _000023AC
+	ldr r2, _000023AC @=0x68736D53
 	ldr r3, [r0, #0x34]
 	cmp r2, r3
 	beq _00002152
@@ -3917,7 +3917,7 @@ _00002170:
 	bge _00002178
 	b _00002392
 _00002178:
-	ldr r0, _000023A8
+	ldr r0, _000023A8 @=gUnknown_03007FF0
 	ldr r0, [r0]
 	mov r8, r0
 	adds r0, r7, #0
@@ -4031,7 +4031,7 @@ _00002226:
 	beq _000022B0
 	b _00002254
 _0000224A:
-	ldr r0, _000023A4
+	ldr r0, _000023A4 @=gUnknown_30D0
 	subs r1, #0x80
 	adds r1, r1, r0
 	ldrb r0, [r1]
@@ -4217,7 +4217,7 @@ _00002388:
 	adds r5, r5, r0
 	bgt _000022E2
 _00002392:
-	ldr r0, _000023AC
+	ldr r0, _000023AC @=0x68736D53
 	str r0, [r7, #0x34]
 	pop {r0, r1, r2, r3, r4, r5, r6, r7}
 	mov r8, r0
@@ -4288,7 +4288,7 @@ _000023FA:
 	movs r3, #7
 	ands r0, r3
 	beq _00002412
-	ldr r3, _00002620
+	ldr r3, _00002620 @=gUnknown_03007FF0
 	ldr r3, [r3]
 	ldr r3, [r3, #0x2c]
 	bl sub_00002102
@@ -4317,10 +4317,10 @@ sub_00002424: @ 0x00002424
 	sub sp, #0x14
 	str r1, [sp]
 	adds r5, r2, #0
-	ldr r1, _00002620
+	ldr r1, _00002620 @=gUnknown_03007FF0
 	ldr r1, [r1]
 	str r1, [sp, #4]
-	ldr r1, _00002624
+	ldr r1, _00002624 @=gUnknown_30D0
 	adds r0, r0, r1
 	ldrb r0, [r0]
 	strb r0, [r5, #4]
@@ -4665,7 +4665,7 @@ _00002688:
 swi_GetJumpList: @ 0x00002692
 	mov ip, lr
 	movs r1, #0x24
-	ldr r2, _000026C0
+	ldr r2, _000026C0 @=gUnknown_3738
 _00002698:
 	ldr r3, [r2]
 	bl sub_000026AA
@@ -4684,7 +4684,7 @@ sub_000026AA:
 	push {r0}
 	lsrs r0, r2, #0x19
 	bne _000026BC
-	ldr r0, _000026C0
+	ldr r0, _000026C0 @=gUnknown_3738
 	cmp r2, r0
 	blo _000026BA
 	lsrs r0, r2, #0xe
@@ -4954,7 +4954,7 @@ sub_0000284A: @ 0x0000284A
 	ldrb r3, [r2]
 	@adds r2, r2, #1
 	.2byte 0x1C52
-	ldr r0, _00002860
+	ldr r0, _00002860 @=0x04000060
 	adds r0, r0, r3
 	bl sub_000026C6
 	strb r3, [r0]
@@ -5055,7 +5055,7 @@ swi_MultiBoot: @ 0x000028CE
 	beq _000028FA
 	cmp r1, #2
 	bgt _0000296E
-	ldr r4, _00002C18
+	ldr r4, _00002C18 @=0xC3871089
 	orrs r4, r1
 _000028FA:
 	strh r4, [r7, #0x3a]
@@ -5063,12 +5063,12 @@ _000028FA:
 	str r0, [r7, #0x10]
 	ldr r4, [r7, #0x24]
 	subs r4, r4, r0
-	ldr r3, _00002C08
+	ldr r3, _00002C08 @=0x0003FFF8
 	ands r4, r3
 	str r4, [r7, #0xc]
 	bl sub_00000B9C
 	beq _0000296E
-	ldr r4, _00002C0C
+	ldr r4, _00002C0C @=0x040000B0
 	ldrh r0, [r4, #0xa]
 	ldrh r2, [r4, #0x16]
 	orrs r0, r2
@@ -5078,7 +5078,7 @@ _000028FA:
 	orrs r0, r2
 	lsrs r0, r0, #0x10
 	bhs _0000296E
-	ldr r6, _00002C10
+	ldr r6, _00002C10 @=0x04000120
 	ldrb r0, [r7, #0x1e]
 	lsls r0, r0, #0x1c
 	lsrs r0, r0, #0x1d
@@ -5092,15 +5092,15 @@ _000028FA:
 _0000293A:
 	strb r0, [r7, #8]
 	strb r1, [r7, #4]
-	ldr r3, _00002C18
+	ldr r3, _00002C18 @=0xC3871089
 	lsrs r3, r3, #0x10
-	ldr r1, _00002D2C
+	ldr r1, _00002D2C @=0x0000C37B
 	cmp r2, #0
-	ldr r4, _00002D34
+	ldr r4, _00002D34 @=0x43202F2F
 	bne _00002950
-	ldr r1, _00002D30
-	ldr r3, _00002C08
-	ldr r4, _00002D38
+	ldr r1, _00002D30 @=0x0000A517
+	ldr r3, _00002C08 @=0x0003FFF8
+	ldr r4, _00002D38 @=0x6465646F
 _00002950:
 	strh r1, [r7, #0x3e]
 	strh r3, [r7, #0x38]
@@ -5130,7 +5130,7 @@ _00002970:
 	ldr r1, [r7, #0x10]
 	adds r1, r1, r5
 	str r1, [r7, #0xc]
-	ldr r1, _00002C08
+	ldr r1, _00002C08 @=0x0003FFF8
 _00002980:
 	@subs r1, r1, #1
 	.2byte 0x1E49
@@ -5163,7 +5163,7 @@ _000029A4:
 	bl sub_00002864
 	strh r5, [r7, #0x38]
 	ldr r1, [r7]
-	ldr r0, _00002D44
+	ldr r0, _00002D44 @=0x6F646573
 	muls r1, r0, r1
 	@adds r1, r1, #1
 	.2byte 0x1C49
@@ -5172,7 +5172,7 @@ _000029A4:
 	eors r0, r1
 	ldr r1, [r7, #0x20]
 	subs r2, r3, r1
-	ldr r1, _00002D94
+	ldr r1, _00002D94 @=gUnknown_020000C0
 	adds r2, r2, r1
 	rsbs r1, r2, #0
 	ldr r2, [r7, #0x40]
@@ -5180,7 +5180,7 @@ _000029A4:
 	eors r0, r1
 	lsrs r2, r0, #0x10
 	strh r2, [r7, #0x3c]
-	ldr r6, _00002C10
+	ldr r6, _00002C10 @=0x04000120
 _000029DE:
 	bl _000028C6
 	ldr r1, [r7, #0x20]
@@ -5196,7 +5196,7 @@ _000029DE:
 	@subs r4, r4, #2
 	.2byte 0x1EA4
 _000029F6:
-	ldr r1, _00002D94
+	ldr r1, _00002D94 @=gUnknown_020000C0
 	adds r4, r4, r1
 _000029FA:
 	ldrb r2, [r7, #8]
@@ -5278,7 +5278,7 @@ _00002A70:
 	ldrh r5, [r7, #0x38]
 	ldr r2, [r7, #4]
 	bl sub_00002864
-	ldr r6, _00002C10
+	ldr r6, _00002C10 @=0x04000120
 	adds r0, r5, #0
 	bl sub_000028BC
 	movs r1, #0
@@ -5316,7 +5316,7 @@ _00002AA8:
 	ldrh r1, [r7, #0x3a]
 	cmp r1, #0
 	bne _00002AB8
-	ldr r1, _00002D98
+	ldr r1, _00002D98 @=0xA1C12083
 _00002AB8:
 	strh r1, [r6, #8]
 	bx lr
@@ -5324,7 +5324,7 @@ _00002AB8:
 	THUMB_FUNC_START sub_00002ABC
 sub_00002ABC: @ 0x00002ABC
 	push {lr}
-	ldr r0, _00002D9C
+	ldr r0, _00002D9C @=gUnknown_03007FF0 + 0xB
 	ldrb r1, [r0]
 	cmp r1, #1
 	bne _00002AE4
@@ -5336,12 +5336,12 @@ sub_00002ABC: @ 0x00002ABC
 	orrs r0, r1
 	bne _00002AE8
 	ldr r0, [r7, #0x38]
-	ldr r1, _00002D94
+	ldr r1, _00002D94 @=gUnknown_020000C0
 	subs r1, r1, r0
 	bge _00002AE4
 	movs r0, #0x78
 	strb r0, [r7, #0x12]
-	ldr r0, _00002D48
+	ldr r0, _00002D48 @=gUnknown_02000000
 	b _00003038
 _00002AE4:
 	movs r0, #0
@@ -5395,10 +5395,10 @@ _00002B2E:
 sub_00002B34: @ 0x00002B34
 	push {r4, r5, r6, r7}
 	push {lr}
-	ldr r7, _00002DA0
-	ldr r4, _00002C10
+	ldr r7, _00002DA0 @=gUnknown_0300000C
+	ldr r4, _00002C10 @=0x04000120
 	ldr r0, [r7, #0x4c]
-	ldr r1, _00002D40
+	ldr r1, _00002D40 @=0x6177614B
 	muls r0, r1, r0
 	@adds r0, r0, #1
 	.2byte 0x1C40
@@ -5413,11 +5413,11 @@ _00002B48:
 	movs r3, #0x80
 	lsls r3, r3, #8
 	bics r0, r3
-	ldr r1, _00002D9C
+	ldr r1, _00002D9C @=gUnknown_03007FF0 + 0xB
 	ldrb r2, [r1]
 	cmp r2, #1
 	beq _00002B68
-	ldr r1, _00002C1C
+	ldr r1, _00002C1C @=gUnknown_03000064
 	ldr r2, [r1, #0x24]
 	@adds r2, r2, #1
 	.2byte 0x1C52
@@ -5461,7 +5461,7 @@ _00002B9E:
 	movs r6, #1
 	movs r3, #0x1e
 _00002BA2:
-	ldr r1, _00002C14
+	ldr r1, _00002C14 @=sub_0000301C
 	str r1, [r7, #0x34]
 	movs r5, #0
 _00002BA8:
@@ -5472,9 +5472,9 @@ _00002BAE:
 	bne sub_00002C20
 	str r5, [r7, #0x10]
 	strb r5, [r7, #0xa]
-	ldr r2, _00002D48
+	ldr r2, _00002D48 @=gUnknown_02000000
 	str r2, [r7, #0x38]
-	ldr r2, _00002D94
+	ldr r2, _00002D94 @=gUnknown_020000C0
 	str r2, [r7, #0x3c]
 	str r2, [r7, #0x44]
 	movs r2, #1
@@ -5499,8 +5499,8 @@ _00002BE2:
 	cmp r6, #1
 	bne _00002BF4
 	strh r5, [r4, #0x14]
-	ldr r2, _00002D4C
-	ldr r1, _00002C08
+	ldr r2, _00002D4C @=0x60032003
+	ldr r1, _00002C08 @=0x0003FFF8
 _00002BEC:
 	strh r2, [r4, #8]
 	strh r5, [r4, #0xa]
@@ -5508,9 +5508,9 @@ _00002BEC:
 	b _00002BDE
 _00002BF4:
 	strh r5, [r4, #0x14]
-	ldr r2, _00002F60
+	ldr r2, _00002F60 @=0x10085088
 	lsrs r2, r2, #0x10
-	ldr r1, _00002C18
+	ldr r1, _00002C18 @=0xC3871089
 	lsrs r1, r1, #0x10
 	b _00002BEC
 
@@ -5544,12 +5544,12 @@ sub_00002C20:
 	add r2, pc, #0x324
 	b _00002C50
 _00002C40:
-	ldr r1, _00002F60
+	ldr r1, _00002F60 @=0x10085088
 	b _00002C4C
 _00002C44:
 	cmp r6, #1
 	bne _00002C40
-	ldr r1, _00002D4C
+	ldr r1, _00002D4C @=0x60032003
 	lsrs r1, r1, #0x10
 _00002C4C:
 	strh r1, [r4, #8]
@@ -5597,10 +5597,10 @@ _00002C8C:
 	bne _00002D50
 	cmp r6, #0
 	bne _00002CEE
-	ldr r0, _00002D98
+	ldr r0, _00002D98 @=0xA1C12083
 	lsrs r0, r0, #0x10
-	ldr r1, _00003080
-	ldr r3, _00002D3C
+	ldr r1, _00003080 @=0x6177614B
+	ldr r3, _00002D3C @=0x20796220
 	bl sub_0000287A
 	str r3, [r7, #0x44]
 	ldr r1, [r7, #0x3c]
@@ -5617,7 +5617,7 @@ _00002C8C:
 	bne _00002CE8
 	str r0, [r1]
 	ldr r1, [r7, #8]
-	ldr r2, _0000309C
+	ldr r2, _0000309C @=0x80808080
 	ands r1, r2
 	cmp r1, r2
 	bne _00002CE8
@@ -5630,7 +5630,7 @@ _00002C8C:
 	subs r1, r1, r2
 	lsls r1, r1, #0x19
 	bne _00002CE8
-	ldr r0, _000030A0
+	ldr r0, _000030A0 @=0xEA000036
 	movs r1, #1
 	bl sub_0000301E
 	cmp r0, #0
@@ -5644,21 +5644,21 @@ _00002CEE:
 	ldr r3, [r7, #0x44]
 	cmp r3, r2
 	beq _00002D56
-	ldr r0, _00002D30
-	ldr r3, _00002D38
+	ldr r0, _00002D30 @=0x0000A517
+	ldr r3, _00002D38 @=0x6465646F
 	cmp r6, #2
 	bne _00002D02
-	ldr r0, _00002D2C
-	ldr r3, _00002D34
+	ldr r0, _00002D2C @=0x0000C37B
+	ldr r3, _00002D34 @=0x43202F2F
 _00002D02:
-	ldr r1, _00002D44
+	ldr r1, _00002D44 @=0x6F646573
 	bl sub_0000287A
 	cmp r2, r3
 	bne _00002D26
 	ldr r2, [r7, #0x1c]
 	bl sub_00002864
 	strh r5, [r7, #0x20]
-	ldr r0, _000030A4
+	ldr r0, _000030A4 @=0xEA00002E
 	movs r1, #4
 	ldrb r6, [r7, #0xe]
 	subs r1, r1, r6
@@ -5693,7 +5693,7 @@ _00002D58:
 sub_00002D5C: @ 0x00002D5C
 	movs r0, #0
 _00002D5E:
-	ldr r3, _00003088
+	ldr r3, _00003088 @=0x04000200
 	strh r0, [r3, #8]
 	bx lr
 
@@ -5704,16 +5704,16 @@ sub_00002D64: @ 0x00002D64
 
 	THUMB_FUNC_START sub_00002D68
 sub_00002D68: @ 0x00002D68
-	ldr r3, _00003098
+	ldr r3, _00003098 @=gUnknown_0300000C
 	movs r1, #0
 	strb r1, [r3, #0xf]
 	bx lr
 
 	THUMB_FUNC_START sub_00002D70
 sub_00002D70: @ 0x00002D70
-	ldr r2, _00003078
+	ldr r2, _00003078 @=0x04000120
 	ldrh r1, [r2]
-	ldr r3, _00003098
+	ldr r3, _00003098 @=gUnknown_0300000C
 	ldrb r0, [r3, #0xe]
 	cmp r0, #1
 	bne _00002D86
@@ -5792,7 +5792,7 @@ _00002DF2:
 	movs r0, #3
 	strb r0, [r3, #0xf]
 	strb r0, [r3, #0xd]
-	ldr r2, _00003094
+	ldr r2, _00003094 @=gUnknown_02000000
 	str r2, [r3, #0x38]
 	movs r2, #0x60
 	add r0, pc, #0x4
@@ -5894,11 +5894,11 @@ _00002E88: @ 0x00002E88
 _00002E9A:
 	lsls r1, r1, #2
 	adds r1, #0xc8
-	ldr r0, _0000307C
+	ldr r0, _0000307C @=0x0003FFF8
 	ands r0, r1
 	eors r1, r0
 	bne _00002F56
-	ldr r1, _0000308C
+	ldr r1, _0000308C @=gUnknown_020000C0
 	adds r2, r1, r0
 	adds r2, #8
 	str r2, [r3, #0x3c]
@@ -5978,7 +5978,7 @@ _00002F18:
 _00002F1C:
 	bne _00002F18
 _00002F1E:
-	ldr r3, _00003098
+	ldr r3, _00003098 @=gUnknown_0300000C
 	bne _00002F56
 _00002F22:
 	ldr r0, [r3, #0x1c]
@@ -5997,15 +5997,15 @@ _00002F22:
 _00002F3C:
 	str r0, [r3, #0x34]
 _00002F3E:
-	ldr r2, _00003078
+	ldr r2, _00003078 @=0x04000120
 	strh r1, [r2, #0xa]
 	strh r1, [r2, #2]
 _00002F44:
 	ldrb r0, [r3, #0xe]
 	cmp r0, #2
 	bne _00002F50
-	ldr r2, _00003078
-	ldr r0, _00002F60
+	ldr r2, _00003078 @=0x04000120
+	ldr r0, _00002F60 @=0x10085088
 	strh r0, [r2, #8]
 _00002F50:
 	movs r0, #0xb
@@ -6025,7 +6025,7 @@ _00002F64: @ 0x00002F64
 	bne _00002F56
 	ldr r0, [r3]
 	str r0, [r3, #4]
-	ldr r1, _00003084
+	ldr r1, _00003084 @=0x6F646573
 	eors r0, r1
 	str r0, [r2, #0x34]
 	movs r0, #0xb
@@ -6072,7 +6072,7 @@ _00002FB0:
 	orrs r1, r0
 	adds r1, #0x3f
 	lsls r1, r1, #3
-	ldr r0, _0000307C
+	ldr r0, _0000307C @=0x0003FFF8
 	ands r0, r1
 	cmp r0, r1
 	beq _00002FD0
@@ -6084,7 +6084,7 @@ _00002FB0:
 	lsls r0, r0, #7
 _00002FD0:
 	adds r0, #0xc
-	ldr r1, _00003094
+	ldr r1, _00003094 @=gUnknown_02000000
 	adds r1, r1, r0
 	str r1, [r3, #0x40]
 	movs r1, #0x20
@@ -6107,14 +6107,14 @@ _00002FE0: @ 0x00002FE0
 	ldr r0, [r3, #0x3c]
 	cmp r0, r1
 	bne _00002F44
-	ldr r1, _0000308C
+	ldr r1, _0000308C @=gUnknown_020000C0
 	cmp r0, r1
 	bne _00003006
 	ldr r0, [r3, #0x40]
 	str r0, [r3, #0x3c]
 	b _00002F44
 _00003006:
-	ldr r0, _00003090
+	ldr r0, _00003090 @=gUnknown_020001F8
 	ldr r1, [r0, #4]
 	ldr r0, [r0]
 	muls r0, r1, r0
@@ -6122,7 +6122,7 @@ _00003006:
 	movs r1, #0
 	add r0, pc, #0x8
 _00003014:
-	ldr r2, _00003078
+	ldr r2, _00003078 @=0x04000120
 	strh r1, [r2, #0x38]
 _00003018:
 	str r0, [r3, #0x34]
@@ -6135,9 +6135,9 @@ sub_0000301C: @ 0x0000301C
 	UNALIGNED_THUMB_FUNC_START sub_0000301E
 sub_0000301E: @ 0x0000301E
 	push {lr}
-	ldr r2, _00003094
+	ldr r2, _00003094 @=gUnknown_02000000
 	str r0, [r2]
-	ldr r3, _0000308C
+	ldr r3, _0000308C @=gUnknown_020000C0
 	strb r1, [r3, #4]
 	cmp r1, #1
 	beq _00003030
@@ -6177,8 +6177,8 @@ _0000305E:
 	strh r0, [r7, #0x24]
 	cmp r0, #0x39
 	bne _00003074
-	ldr r0, _000030A8
-	ldr r1, _000030AC
+	ldr r0, _000030A8 @=gUnknown_0300390C
+	ldr r1, _000030AC @=gUnknown_3980
 	bl swi_MusicPlayerStart
 _00003074:
 	b _00002B48
@@ -6254,7 +6254,7 @@ gUnknown_3200:
 	.global gUnknown_3264
 gUnknown_3264:
 	.byte 0x00, 0x7C, 0x1F, 0xFF, 0x5F, 0xFD, 0x1F, 0x7C
-	
+
 	.global gUnknown_326C
 gUnknown_326C:
 	.byte 0x24, 0xD4, 0x00, 0x00
