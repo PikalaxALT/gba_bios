@@ -387,7 +387,7 @@ swi_Div: @ 0x000003B4
 _000003C8:
 	cmp r2, r0, lsr #1
 	lslls r2, r2, #1
-	blo _000003C8
+	bcc _000003C8
 _000003D4:
 	cmp r0, r2
 	adc r3, r3, r3
@@ -420,7 +420,7 @@ _00000420:
 _00000430:
 	cmp r2, r0, lsr #1
 	lslls r2, r2, #1
-	blo _00000430
+	bcc _00000430
 _0000043C:
 	cmp r0, r2
 	adc r3, r3, r3
@@ -431,7 +431,7 @@ _0000043C:
 	add r1, r1, r3
 	lsrs r1, r1, #1
 	cmp r1, r4
-	blo _00000420
+	bcc _00000420
 	mov r0, r4
 	ldm sp!, {r4}
 	bx lr
@@ -1238,10 +1238,10 @@ swi_CPUSet: @ 0x00000B4C
 	beq _00000B96
 	movs r5, #0
 	lsrs r3, r2, #0x1b
-	blo _00000B78
+	bcc _00000B78
 	adds r5, r1, r4
 	lsrs r3, r2, #0x19
-	blo _00000B6E
+	bcc _00000B6E
 	ldm r0!, {r3}
 _00000B66:
 	cmp r1, r5
@@ -1257,7 +1257,7 @@ _00000B6E:
 _00000B78:
 	lsrs r4, r4, #1
 	lsrs r3, r2, #0x19
-	blo _00000B8A
+	bcc _00000B8A
 	ldrh r3, [r0]
 _00000B80:
 	cmp r5, r4
@@ -1304,7 +1304,7 @@ swi_CPUFastSet: @ 0x00000BC4
 	beq _00000C24
 	add sl, r1, sl, lsr #9
 	lsrs r2, r2, #0x19
-	blo _00000C14
+	bcc _00000C14
 	ldr r2, [r0]
 	mov r3, r2
 	mov r4, r2
@@ -2223,7 +2223,7 @@ _000014A0:
 	bgt _00001490
 	ldrb r0, [r4, #3]
 	lsrs r1, r0, #8
-	blo _000014B0
+	bcc _000014B0
 	bl swi_SoundDriverMode
 _000014B0:
 	ldr r0, _000014BC @=0x68736D53
@@ -2350,7 +2350,7 @@ _00001578:
 _00001580:
 	ldrb r2, [r0]
 	lsrs r3, r2, #8
-	blo _00001592
+	bcc _00001592
 	ldrh r3, [r7, #0x28]
 	lsrs r3, r3, #2
 	strb r3, [r0, #0x13]
@@ -2371,7 +2371,7 @@ sub_0000159C: @ 0x0000159C
 	ldrb r5, [r1]
 	adds r7, r1, #0
 	lsrs r1, r5, #1
-	blo _00001608
+	bcc _00001608
 	ldrb r1, [r7, #0x12]
 	ldrb r2, [r7, #0x13]
 	ldrb r4, [r7, #0x18]
@@ -2429,7 +2429,7 @@ _00001606:
 	strb r1, [r7, #0x11]
 _00001608:
 	lsrs r1, r5, #3
-	blo _00001646
+	bcc _00001646
 	movs r3, #0xe
 	ldrsb r1, [r7, r3]
 	ldrb r2, [r7, #0xf]
@@ -2749,7 +2749,7 @@ swi_SoundDriverVSyncOff: @ 0x00001878
 	ldr r7, [r0, #0x30]
 	ldr r0, [r7]
 	cmp r0, r3
-	blo _000018B0
+	bcc _000018B0
 	adds r3, #1
 	cmp r0, r3
 	bhi _000018B0
@@ -3491,12 +3491,12 @@ sub_00001E74:
 	mov r1, r8
 	adds r6, r6, r5
 	lsrs r1, r1, #3
-	blo _00001E82
+	bcc _00001E82
 	stm r5!, {r0}
 	stm r6!, {r0}
 _00001E82:
 	lsrs r1, r1, #1
-	blo _00001E8E
+	bcc _00001E8E
 	stm r5!, {r0}
 	stm r6!, {r0}
 	stm r5!, {r0}
@@ -3607,7 +3607,7 @@ _00001F46:
 	ldrb r0, [r4, #4]
 	adds r5, r5, r0
 	cmp r5, #0xff
-	blo _00001F54
+	bcc _00001F54
 	movs r5, #0xff
 	.2byte 0x1E76 @ subs r6, r6, #1
 	strb r6, [r4]
@@ -3681,7 +3681,7 @@ _00001FFC:
 	ldr lr, [r4, #0x20]
 _00002004:
 	cmp r7, sb, lsl #2
-	blo _00002028
+	bcc _00002028
 _0000200C:
 	cmp r2, #4
 	ble _0000204C
@@ -3692,7 +3692,7 @@ _0000200C:
 	bhs _0000200C
 _00002028:
 	cmp r7, sb, lsl #1
-	blo _00002044
+	bcc _00002044
 	cmp r2, #2
 	ble _0000204C
 	sub r2, r2, #2
@@ -3700,7 +3700,7 @@ _00002028:
 	sub r7, r7, sb, lsl #1
 _00002044:
 	cmp r7, sb
-	blo _0000207C
+	bcc _0000207C
 _0000204C:
 	subs r2, r2, #1
 	bne _0000206C
@@ -3735,7 +3735,7 @@ _0000207C:
 	subs r8, r8, #1
 	beq _000020CC
 	cmp r7, sb
-	blo _0000207C
+	bcc _0000207C
 	b _00002004
 _000020CC:
 	str r7, [r4, #0x1c]
@@ -3912,11 +3912,11 @@ _00002206:
 	.2byte 0x1C52 @ adds r2, r2, #1
 	str r2, [r5, #0x40]
 	cmp r1, #0xbd
-	blo _00002210
+	bcc _00002210
 	strb r1, [r5, #7]
 _00002210:
 	cmp r1, #0xcf
-	blo _00002226
+	bcc _00002226
 	mov r0, r8
 	ldr r3, [r0, #0x38]
 	adds r0, r1, #0
@@ -4027,7 +4027,7 @@ _000022D0:
 _000022D6:
 	strh r0, [r7, #0x22]
 	cmp r0, #0x96
-	blo _000022DE
+	bcc _000022DE
 	b _0000218C
 _000022DE:
 	ldrb r2, [r7, #8]
@@ -4340,7 +4340,7 @@ _000024EC:
 	ldrb r1, [r4, #0x13]
 	ldr r0, [sp, #0x10]
 	cmp r1, r0
-	blo _00002568
+	bcc _00002568
 	beq _0000250C
 	b _0000260E
 _0000250C:
@@ -4388,7 +4388,7 @@ _0000254C:
 	adds r7, r0, #0
 	b _0000255A
 _00002558:
-	blo _0000255C
+	bcc _0000255C
 _0000255A:
 	mov r8, r4
 _0000255C:
@@ -4586,7 +4586,7 @@ sub_000026AA:
 	bne _000026BC
 	ldr r0, _000026C0 @=gUnknown_3738
 	cmp r2, r0
-	blo _000026BA
+	bcc _000026BA
 	lsrs r0, r2, #0xe
 	beq _000026BC
 _000026BA:
@@ -4866,7 +4866,7 @@ _00002866:
 	eors r1, r2
 	lsrs r5, r5, #1
 	lsrs r1, r1, #1
-	blo _00002872
+	bcc _00002872
 	eors r5, r0
 _00002872:
 	lsrs r2, r2, #1
@@ -5001,7 +5001,7 @@ _00002950:
 	adds r4, r6, #0
 _00002960:
 	lsrs r0, r0, #1
-	blo _00002970
+	bcc _00002970
 	ldrb r1, [r4, #3]
 	cmp r1, #0x73
 	bne _0000296E
@@ -5087,7 +5087,7 @@ _000029FA:
 	adds r5, r6, #0
 _000029FE:
 	lsrs r2, r2, #1
-	blo _00002A0E
+	bcc _00002A0E
 	ldrh r1, [r5, #2]
 	eors r1, r4
 	lsls r1, r1, #0x10
@@ -5128,7 +5128,7 @@ _00002A3C:
 	adds r3, r6, #0
 _00002A46:
 	lsrs r2, r2, #1
-	blo _00002A5E
+	bcc _00002A5E
 	ldrh r1, [r3, #2]
 	cmp r1, #0x75
 	beq _00002A5A
@@ -5208,7 +5208,7 @@ sub_00002ABC: @ 0x00002ABC
 	bne _00002AE4
 	ldrb r0, [r7, #0xa]
 	lsls r0, r0, #0x19
-	blo _00002AE4
+	bcc _00002AE4
 	ldrb r0, [r7, #0x12]
 	ldrb r1, [r7, #0x13]
 	orrs r0, r1
@@ -5833,7 +5833,7 @@ _00002EFC: @ 0x00002EFC
 	lsrs r3, r3, #0x1d
 _00002F0E:
 	lsrs r3, r3, #1
-	blo _00002F1C
+	bcc _00002F1C
 	ldrh r1, [r2, #2]
 	cmp r0, r1
 	bne _00002F1E
@@ -5929,7 +5929,7 @@ _00002F8C: @ 0x00002F8C
 	movs r2, #0x7f
 	ands r1, r2
 	lsls r0, r0, #0x10
-	blo _00002FB0
+	bcc _00002FB0
 	adds r1, #0x80
 _00002FB0:
 	lsrs r0, r0, #0x10
