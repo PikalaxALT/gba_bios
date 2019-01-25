@@ -133,8 +133,8 @@ _0000011C: @ 0x0000011C
 _00000120:
 	str r0, [r4, r1]
 	@ FIXME: Why is it assembling the wrong opcode?
-	@ adds r1, r1, #4
-	.2byte 0x1D09
+	@ This occurs throughout
+	.2byte 0x1D09 @ adds r1, r1, #4
 	blt _00000120
 	bx lr
 
@@ -259,8 +259,7 @@ sub_00000284: @ 0x00000284
 	strb r0, [r2, #2]
 	strb r0, [r2, #9]
 	movs r0, #0xff
-	@adds r0, r0, #2
-	.2byte 0x1C80
+	.2byte 0x1C80 @ adds r0, r0, #2
 	movs r2, #0xa0
 	movs r3, #0x90
 	str r6, [sp]
@@ -599,11 +598,9 @@ _000005CC:
 	lsls r1, r1, #1
 	orrs r1, r6
 	ldrh r0, [r1]
-	@adds r5, r5, #2
-	.2byte 0x1CAD
+	.2byte 0x1CAD @ adds r5, r5, #2
 _000005E4:
-	@adds r4, r4, #1
-	.2byte 0x1C64
+	.2byte 0x1C64 @ adds r4, r4, #1
 	cmp r4, #0xb
 	bne _000005CC
 	pop {r3, r4, r5, r6, pc}
@@ -635,13 +632,10 @@ _000006B2:
 _000006B8:
 	eors r3, r2
 	lsls r2, r2, #8
-	@subs r5, r5, #1
-	.2byte 0x1E6D
+	.2byte 0x1E6D @ subs r5, r5, #1
 	bgt _000006B8
-	@adds r0, r0, #1
-	.2byte 0x1C40
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1C40 @ adds r0, r0, #1
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bgt _000006B2
 	adds r0, r3, #0
 	lsls r0, r0, #0x1b
@@ -683,8 +677,7 @@ _000006FC:
 	ldrb r2, [r0, r6]
 	ldrb r3, [r1, r6]
 	ands r2, r4
-	@adds r6, r6, #1
-	.2byte 0x1C76
+	.2byte 0x1C76 @ adds r6, r6, #1
 	cmp r2, r3
 	beq _000006EE
 	b _00000722
@@ -693,8 +686,7 @@ _0000070E:
 _00000710:
 	ldrb r2, [r0, r6]
 	adds r4, r4, r2
-	@adds r6, r6, #1
-	.2byte 0x1C76
+	.2byte 0x1C76 @ adds r6, r6, #1
 	cmp r6, #0xba
 	blt _00000710
 	lsls r0, r4, #0x18
@@ -728,8 +720,7 @@ sub_00000738: @ 0x00000738
 	movs r3, #0x40
 	subs r3, r3, r2
 	muls r6, r3, r6
-	@subs r0, r0, #3
-	.2byte 0x1EC0
+	.2byte 0x1EC0 @ subs r0, r0, #3
 	movs r3, #0x18
 	muls r3, r0, r3
 	lsls r3, r3, #8
@@ -788,13 +779,11 @@ _000007A6:
 _000007A8:
 	strh r0, [r4, r6]
 	adds r0, r0, r1
-	@adds r6, r6, #2
-	.2byte 0x1CB6
+	.2byte 0x1CB6 @ adds r6, r6, #2
 	cmp r6, r2
 	blt _000007A8
 	adds r4, r4, r5
-	@adds r7, r7, #1
-	.2byte 0x1C7F
+	.2byte 0x1C7F @ adds r7, r7, #1
 	cmp r7, r3
 	blt _000007A6
 	pop {r4, r5, r6, r7, pc}
@@ -833,8 +822,7 @@ _000007C0:
 	ldr r3, _00000AD0 @=0x05000200
 	adds r3, r6, r3
 	strh r4, [r3]
-	@subs r7, r7, #1
-	.2byte 0x1E7F
+	.2byte 0x1E7F @ subs r7, r7, #1
 	bge _000007C0
 	pop {r4, r5, r6, r7, pc}
 
@@ -852,20 +840,17 @@ swi_SoundBiasChange:
 	beq _0000081C
 	cmp r1, ip
 	bge _0000082C
-	@adds r2, r2, #2
-	.2byte 0x1C92
+	.2byte 0x1C92 @ adds r2, r2, #2
 	b _00000822
 _0000081C:
 	cmp r1, #0
 	ble _0000082C
-	@subs r2, r2, #2
-	.2byte 0x1E92
+	.2byte 0x1E92 @ subs r2, r2, #2
 _00000822:
 	strh r2, [r3]
 	movs r2, #8
 _00000826:
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bpl _00000826
 	b swi_SoundBiasChange
 _0000082C:
@@ -956,10 +941,10 @@ _000008B0:
 	bl sub_0000082E
 	ldr r0, _00000AD8 @=gUnknown_03000564
 	ldr r1, _00000B04 @=gUnknown_03001564
-	bl __swi_HuffUnComp
+	bl swi_HuffUnComp_t
 	ldr r0, _00000B04 @=gUnknown_03001564
 	ldr r1, _00000AD8 @=gUnknown_03000564
-	bl sub_000010F8
+	bl swi_LZ77UnCompWRAM_t
 	movs r7, #0
 _000008C6:
 	lsls r0, r7, #2
@@ -971,9 +956,8 @@ _000008C6:
 	lsls r1, r7, #0xa
 	adds r1, r1, r3
 	add r2, sp, #8
-	bl __swi_BitUnPack
-	@adds r7, r7, #1
-	.2byte 0x1C7F
+	bl swi_BitUnPack_t
+	.2byte 0x1C7F @ adds r7, r7, #1
 	cmp r7, #8
 	blt _000008C6
 	movs r7, #0xe
@@ -994,11 +978,9 @@ _000008E6:
 	adds r1, r1, r3
 	movs r2, #0x80
 	bl swi_CPUSet
-	@subs r4, r4, #1
-	.2byte 0x1E64
+	.2byte 0x1E64 @ subs r4, r4, #1
 	bge _000008E6
-	@subs r7, r7, #2
-	.2byte 0x1EBF
+	.2byte 0x1EBF @ subs r7, r7, #2
 	bge _000008E4
 	ldr r0, _00000AC0 @=gUnknown_03000088
 	bl sub_0000094A
@@ -1037,7 +1019,7 @@ sub_0000094A: @ 0x0000094A
 	bl swi_CPUSet
 	ldr r0, _00000AD8 @=gUnknown_03000564
 	ldr r1, _00000B04 @=gUnknown_03001564
-	bl __swi_HuffUnComp
+	bl swi_HuffUnComp_t
 	ldr r0, _00000B04 @=gUnknown_03001564
 	ldr r2, _00000B28 @=0x0000D082
 	str r2, [r0]
@@ -1051,7 +1033,7 @@ sub_00000974: @ 0x00000974
 	ldr r0, _00000AD8 @=gUnknown_03000564
 	ldr r1, _00000B04 @=gUnknown_03001564
 	ldr r2, _00000B2C @=gUnknown_30C8
-	bl __swi_BitUnPack
+	bl swi_BitUnPack_t
 	pop {r0, r4, r5, r6, r7, pc}
 
 	UNALIGNED_THUMB_FUNC_START sub_00000982
@@ -1065,12 +1047,10 @@ _0000098A:
 _0000098C:
 	ldm r6!, {r0, r1, r2, r3}
 	stm r4!, {r0, r1, r2, r3}
-	@subs r5, r5, #1
-	.2byte 0x1E6D
+	.2byte 0x1E6D @ subs r5, r5, #1
 	bgt _0000098C
 	adds r4, #0xc0
-	@subs r7, r7, #1
-	.2byte 0x1E7F
+	.2byte 0x1E7F @ subs r7, r7, #1
 	bgt _0000098A
 	movs r7, #3
 _0000099C:
@@ -1081,9 +1061,8 @@ _0000099C:
 	adds r1, r1, r3
 	movs r2, #1
 	lsls r2, r2, #8
-	bl thumb_CPUFastSet
-	@subs r7, r7, #1
-	.2byte 0x1E7F
+	bl swi_CPUFastSet_t
+	.2byte 0x1E7F @ subs r7, r7, #1
 	bgt _0000099C
 	mov r0, sp
 	str r7, [r0]
@@ -1121,8 +1100,7 @@ swi_RegisterRamReset: @ 0x000009C2
 	adds r1, r4, #4
 	movs r2, #8
 	bl sub_00000AAC
-	@subs r1, r1, #4
-	.2byte 0x1F09
+	.2byte 0x1F09 @ subs r1, r1, #4
 	movs r2, #0x10
 	bl sub_00000AAC
 	movs r1, #0xb0
@@ -1211,7 +1189,7 @@ sub_00000AAC: @ 0x00000AAC
 _00000AB2:
 	mov r0, sp
 	orrs r2, r5
-	b thumb_CPUFastSet
+	b swi_CPUFastSet_t
 	.align 2, 0
 _00000AB8: .4byte sub_00002D70
 _00000ABC: .4byte swi_SoundDriverVSync
@@ -1285,16 +1263,14 @@ _00000B80:
 	cmp r5, r4
 	bge _00000B96
 	strh r3, [r1, r5]
-	@adds r5, r5, #2
-	.2byte 0x1CAD
+	.2byte 0x1CAD @ adds r5, r5, #2
 	b _00000B80
 _00000B8A:
 	cmp r5, r4
 	bge _00000B96
 	ldrh r3, [r0, r5]
 	strh r3, [r1, r5]
-	@adds r5, r5, #2
-	.2byte 0x1CAD
+	.2byte 0x1CAD @ adds r5, r5, #2
 	b _00000B8A
 _00000B96:
 	pop {r4, r5}
@@ -1319,12 +1295,7 @@ sub_00000BA4: @ 0x00000BA4
 _00000BBC:
 	bx lr
 
-	THUMB_FUNC_START thumb_CPUFastSet
-thumb_CPUFastSet:
-	mov r3, pc
-	bx r3
-
-	ARM_FUNC_START swi_CPUFastSet
+	THUMB_INTERWORK_FALLTHROUGH swi_CPUFastSet
 swi_CPUFastSet: @ 0x00000BC4
 	push {r4, r5, r6, r7, r8, sb, sl, lr}
 	lsl sl, r2, #0xb
@@ -1700,12 +1671,7 @@ gUnknown_0D5C:
 	.2byte 0xFCDD
 	.2byte 0xFE6E
 
-	THUMB_FUNC_START __swi_BitUnPack
-__swi_BitUnPack: @ 0x00000F5C
-	mov r3, pc
-	bx r3
-
-	ARM_FUNC_START swi_BitUnPack
+	THUMB_INTERWORK_FALLTHROUGH swi_BitUnPack
 swi_BitUnPack: @ 0x00000F60
 	push {r4, r5, r6, r7, r8, sb, sl, fp, lr}
 	sub sp, sp, #8
@@ -1757,12 +1723,7 @@ _00001004:
 	pop {r4, r5, r6, r7, r8, sb, sl, fp, lr}
 	bx lr
 
-	THUMB_FUNC_START __swi_HuffUnComp
-__swi_HuffUnComp: @ 0x00001010
-	mov r3, pc
-	bx r3
-
-	ARM_FUNC_START swi_HuffUnComp
+	THUMB_INTERWORK_FALLTHROUGH swi_HuffUnComp
 swi_HuffUnComp: @ 0x00001014
 	push {r4, r5, r6, r7, r8, sb, sl, fp, lr}
 	sub sp, sp, #8
@@ -1826,12 +1787,7 @@ _000010EC:
 	pop {r4, r5, r6, r7, r8, sb, sl, fp, lr}
 	bx lr
 
-	THUMB_FUNC_START sub_000010F8
-sub_000010F8: @ 0x000010F8
-	mov r3, pc
-	bx r3
-
-	ARM_FUNC_START swi_LZ77UnCompWRAM
+	THUMB_INTERWORK_FALLTHROUGH swi_LZ77UnCompWRAM
 swi_LZ77UnCompWRAM: @ 0x000010FC
 	push {r4, r5, r6, lr}
 	ldr r5, [r0], #4
@@ -1956,39 +1912,30 @@ _00001286:
 	cmp r7, #0
 	ble _000012BA
 	ldrb r4, [r0]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	lsls r2, r4, #0x19
 	lsrs r2, r2, #0x19
 	lsrs r3, r4, #8
 	bhs _000012A8
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	subs r7, r7, r2
 _0000129A:
 	ldrb r3, [r0]
 	strb r3, [r1]
-	@adds r0, r0, #1
-	.2byte 0x1C40
-	@adds r1, r1, #1
-	.2byte 0x1C49
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1C40 @ adds r0, r0, #1
+	.2byte 0x1C49 @ adds r1, r1, #1
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bgt _0000129A
 	b _00001286
 _000012A8:
-	@adds r2, r2, #3
-	.2byte 0x1CD2
+	.2byte 0x1CD2 @ adds r2, r2, #3
 	subs r7, r7, r2
 	ldrb r5, [r0]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 _000012B0:
 	strb r5, [r1]
-	@adds r1, r1, #1
-	.2byte 0x1C49
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1C49 @ adds r1, r1, #1
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bgt _000012B0
 	b _00001286
 _000012BA:
@@ -2012,43 +1959,36 @@ _000012D4:
 	ble _0000132A
 	ldrb r3, [r0]
 	str r3, [sp, #4]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	ldr r3, [sp, #4]
 	lsls r2, r3, #0x19
 	lsrs r2, r2, #0x19
 	ldr r6, [sp, #4]
 	lsrs r3, r6, #8
 	bhs _00001308
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	subs r5, r5, r2
 _000012EE:
 	ldrb r6, [r0]
 	lsls r6, r4
 	orrs r7, r6
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	movs r3, #8
 	eors r4, r3
 	bne _00001302
 	strh r7, [r1]
-	@adds r1, r1, #2
-	.2byte 0x1C89
+	.2byte 0x1C89 @ adds r1, r1, #2
 	movs r7, #0
 _00001302:
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bgt _000012EE
 	b _000012D4
 _00001308:
-	@adds r2, r2, #3
-	.2byte 0x1CD2
+	.2byte 0x1CD2 @ adds r2, r2, #3
 	subs r5, r5, r2
 	ldrb r6, [r0]
 	str r6, [sp, #8]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 _00001312:
 	ldr r6, [sp, #8]
 	lsls r6, r4
@@ -2057,12 +1997,10 @@ _00001312:
 	eors r4, r3
 	bne _00001324
 	strh r7, [r1]
-	@adds r1, r1, #2
-	.2byte 0x1C89
+	.2byte 0x1C89 @ adds r1, r1, #2
 	movs r7, #0
 _00001324:
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bgt _00001312
 	b _000012D4
 _0000132A:
@@ -2079,22 +2017,17 @@ swi_Diff8bitUnFilterWRAM: @ 0x00001332
 	bl sub_00000B9C
 	beq _00001356
 	ldrb r2, [r0]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	strb r2, [r1]
-	@adds r1, r1, #1
-	.2byte 0x1C49
+	.2byte 0x1C49 @ adds r1, r1, #1
 _00001346:
-	@subs r4, r4, #1
-	.2byte 0x1E64
+	.2byte 0x1E64 @ subs r4, r4, #1
 	ble _00001356
 	ldrb r3, [r0]
 	adds r2, r3, r2
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	strb r2, [r1]
-	@adds r1, r1, #1
-	.2byte 0x1C49
+	.2byte 0x1C49 @ adds r1, r1, #1
 	b _00001346
 _00001356:
 	pop {r4}
@@ -2111,17 +2044,14 @@ swi_Diff8bitUnFilterVRAM: @ 0x0000135C
 	beq _00001392
 	movs r4, #8
 	ldrb r7, [r0]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	adds r2, r7, #0
 _00001372:
-	@subs r5, r5, #1
-	.2byte 0x1E6D
+	.2byte 0x1E6D @ subs r5, r5, #1
 	ble _00001392
 	ldrb r3, [r0]
 	adds r7, r3, r7
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	lsls r6, r7, #0x18
 	lsrs r6, r6, #0x18
 	lsls r6, r4
@@ -2130,8 +2060,7 @@ _00001372:
 	eors r4, r3
 	bne _00001372
 	strh r2, [r1]
-	@adds r1, r1, #2
-	.2byte 0x1C89
+	.2byte 0x1C89 @ adds r1, r1, #2
 	movs r2, #0
 	b _00001372
 _00001392:
@@ -2147,22 +2076,17 @@ swi_Diff16bitUnFilter: @ 0x00001398
 	bl sub_00000B9C
 	beq _000013BC
 	ldrh r2, [r0]
-	@adds r0, r0, #2
-	.2byte 0x1C80
+	.2byte 0x1C80 @ adds r0, r0, #2
 	strh r2, [r1]
-	@adds r1, r1, #2
-	.2byte 0x1C89
+	.2byte 0x1C89 @ adds r1, r1, #2
 _000013AC:
-	@subs r4, r4, #2
-	.2byte 0x1EA4
+	.2byte 0x1EA4 @ subs r4, r4, #2
 	ble _000013BC
 	ldrh r3, [r0]
 	adds r2, r3, r2
-	@adds r0, r0, #2
-	.2byte 0x1C80
+	.2byte 0x1C80 @ adds r0, r0, #2
 	strh r2, [r1]
-	@adds r1, r1, #2
-	.2byte 0x1C89
+	.2byte 0x1C89 @ adds r1, r1, #2
 	b _000013AC
 _000013BC:
 	pop {r4}
@@ -3496,8 +3420,7 @@ swi_SoundDriverMain: @ 0x00001DC4
 	beq _00001DD2
 	bx lr
 _00001DD2:
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 	str r3, [r0]
 	push {r4, r5, r6, r7, lr}
 	mov r1, r8
@@ -3587,8 +3510,7 @@ _00001E8E:
 	stm r6!, {r0}
 	stm r5!, {r0}
 	stm r6!, {r0}
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bgt _00001E8E
 	ldr r4, [sp, #0x14]
 	ldr r0, [r4, #0x14]
@@ -3637,8 +3559,7 @@ _00001EEE:
 	tst r0, r6
 	beq _00001F04
 	ldrb r0, [r4, #0xd]
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	strb r0, [r4, #0xd]
 	bhi _00001F54
 _00001EFE:
@@ -3676,8 +3597,7 @@ _00001F24:
 	bhi _00001F54
 	adds r5, r0, #0
 	beq _00001F16
-	@subs r6, r6, #1
-	.2byte 0x1E76
+	.2byte 0x1E76 @ subs r6, r6, #1
 	strb r6, [r4]
 	b _00001F54
 _00001F42:
@@ -3689,15 +3609,13 @@ _00001F46:
 	cmp r5, #0xff
 	blo _00001F54
 	movs r5, #0xff
-	@subs r6, r6, #1
-	.2byte 0x1E76
+	.2byte 0x1E76 @ subs r6, r6, #1
 	strb r6, [r4]
 _00001F54:
 	strb r5, [r4, #9]
 	ldr r0, [sp, #0x14]
 	ldrb r0, [r0, #7]
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	muls r0, r5, r0
 	lsrs r5, r0, #4
 	ldrb r0, [r4, #2]
@@ -3832,8 +3750,7 @@ _000020D8:
 	THUMB_FUNC_START sub_000020E4
 sub_000020E4:
 	ldr r0, [sp, #4]
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	ble _000020EE
 	adds r4, #0x40
 	b _00001EB0
@@ -3865,8 +3782,7 @@ swi_SoundDriverVSync: @ 0x0000210C
 	cmp r2, r3
 	bne _00002136
 	ldrb r1, [r0, #4]
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1E49 @ subs r1, r1, #1
 	strb r1, [r0, #4]
 	bgt _00002136
 	ldrb r1, [r0, #0xb]
@@ -3896,8 +3812,7 @@ sub_00002148: @ 0x00002148
 	beq _00002152
 	bx lr
 _00002152:
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 	str r3, [r0, #0x34]
 	push {r4, r5, r6, r7, lr}
 	mov r4, r8
@@ -3953,8 +3868,7 @@ _000021AC:
 	ldrb r0, [r4, #0x10]
 	cmp r0, #0
 	beq _000021CE
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	strb r0, [r4, #0x10]
 	bne _000021CE
 	movs r0, #0x40
@@ -3995,8 +3909,7 @@ _000021FA:
 	ldrb r1, [r5, #7]
 	b _00002210
 _00002206:
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	str r2, [r5, #0x40]
 	cmp r1, #0xbd
 	blo _00002210
@@ -4040,8 +3953,7 @@ _00002254:
 	ldrb r0, [r5, #1]
 	cmp r0, #0
 	beq _000021FA
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	strb r0, [r5, #1]
 	ldrb r1, [r5, #0x19]
 	cmp r1, #0
@@ -4052,8 +3964,7 @@ _00002254:
 	ldrb r0, [r5, #0x1c]
 	cmp r0, #0
 	beq _00002276
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	strb r0, [r5, #0x1c]
 	b _000022B0
 _00002276:
@@ -4095,8 +4006,7 @@ _000022B0:
 	mov r3, sl
 	mov r4, fp
 _000022B6:
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	ble _000022C2
 	movs r0, #0x50
 	adds r5, r5, r0
@@ -4210,8 +4120,7 @@ _0000237E:
 	strb r0, [r5]
 	mov r2, sb
 _00002388:
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	ble _00002392
 	movs r0, #0x50
 	adds r5, r5, r0
@@ -4329,22 +4238,19 @@ sub_00002424: @ 0x00002424
 	cmp r0, #0x80
 	bhs _0000246A
 	strb r0, [r5, #5]
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 	ldrb r0, [r3]
 	cmp r0, #0x80
 	bhs _00002468
 	strb r0, [r5, #6]
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 	ldrb r0, [r3]
 	cmp r0, #0x80
 	bhs _00002468
 	ldrb r1, [r5, #4]
 	adds r1, r1, r0
 	strb r1, [r5, #4]
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 _00002468:
 	str r3, [r5, #0x40]
 _0000246A:
@@ -4421,8 +4327,7 @@ _000024D4:
 	bne _000024EC
 	b _0000260E
 _000024EC:
-	@subs r6, r6, #1
-	.2byte 0x1E76
+	.2byte 0x1E76 @ subs r6, r6, #1
 	lsls r0, r6, #6
 	adds r4, r4, r0
 	ldrb r1, [r4]
@@ -4461,8 +4366,7 @@ _00002522:
 	beq _0000253C
 	cmp r2, #0
 	bne _00002540
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	ldrb r6, [r4, #0x13]
 	ldr r7, [r4, #0x2c]
 	b _0000255A
@@ -4489,8 +4393,7 @@ _0000255A:
 	mov r8, r4
 _0000255C:
 	adds r4, #0x40
-	@subs r3, r3, #1
-	.2byte 0x1E5B
+	.2byte 0x1E5B @ subs r3, r3, #1
 	bgt _00002522
 	mov r4, r8
 	cmp r4, #0
@@ -4602,8 +4505,7 @@ sub_00002628: @ 0x00002628
 	cmp r3, #0x80
 	bhs _0000263A
 	strb r3, [r1, #5]
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	str r2, [r1, #0x40]
 	b _0000263C
 _0000263A:
@@ -4670,10 +4572,8 @@ _00002698:
 	ldr r3, [r2]
 	bl sub_000026AA
 	stm r0!, {r3}
-	@adds r2, r2, #4
-	.2byte 0x1D12
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1D12 @ adds r2, r2, #4
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bgt _00002698
 	bx ip
 
@@ -4735,12 +4635,10 @@ sub_000026EE: @ 0x000026EE
 	lsls r2, r2, #2
 	adds r3, r1, r2
 	ldr r2, [r1, #0x40]
-	@adds r2, r2, #4
-	.2byte 0x1D12
+	.2byte 0x1D12 @ adds r2, r2, #4
 	str r2, [r3, #0x44]
 	ldrb r2, [r1, #2]
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	strb r2, [r1, #2]
 	b sub_000026CE
 _00002706:
@@ -4751,8 +4649,7 @@ sub_00002708: @ 0x00002708
 	ldrb r2, [r1, #2]
 	cmp r2, #0
 	beq _0000271A
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	strb r2, [r1, #2]
 	lsls r2, r2, #2
 	adds r3, r1, r2
@@ -4768,14 +4665,12 @@ sub_0000271C: @ 0x0000271C
 	ldrb r3, [r2]
 	cmp r3, #0
 	bne _0000272C
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	str r2, [r1, #0x40]
 	b _000026D0
 _0000272C:
 	ldrb r3, [r1, #3]
-	@adds r3, r3, #1
-	.2byte 0x1C5B
+	.2byte 0x1C5B @ adds r3, r3, #1
 	strb r3, [r1, #3]
 	mov ip, r3
 	bl sub_000026C4
@@ -4785,8 +4680,7 @@ _0000272C:
 _0000273E:
 	movs r3, #0
 	strb r3, [r1, #3]
-	@adds r2, r2, #5
-	.2byte 0x1D52
+	.2byte 0x1D52 @ adds r2, r2, #5
 	str r2, [r1, #0x40]
 	pop {r0}
 	bx r0
@@ -4826,8 +4720,7 @@ sub_0000277A: @ 0x0000277A
 	mov ip, lr
 	ldr r2, [r1, #0x40]
 	ldrb r3, [r2]
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	str r2, [r1, #0x40]
 	lsls r2, r3, #1
 	adds r2, r2, r3
@@ -4952,8 +4845,7 @@ sub_0000284A: @ 0x0000284A
 	mov ip, lr
 	ldr r2, [r1, #0x40]
 	ldrb r3, [r2]
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	ldr r0, _00002860 @=0x04000060
 	adds r0, r0, r3
 	bl sub_000026C6
@@ -4978,8 +4870,7 @@ _00002866:
 	eors r5, r0
 _00002872:
 	lsrs r2, r2, #1
-	@subs r6, r6, #1
-	.2byte 0x1E76
+	.2byte 0x1E76 @ subs r6, r6, #1
 	bne _00002866
 	bx lr
 
@@ -5003,8 +4894,7 @@ _00002894:
 	str r1, [r7, #0x50]
 	mov r1, ip
 	muls r4, r1, r4
-	@adds r4, r4, #1
-	.2byte 0x1C64
+	.2byte 0x1C64 @ adds r4, r4, #1
 	ldr r2, [r3]
 	eors r2, r4
 	rsbs r1, r3, #0
@@ -5015,8 +4905,7 @@ _00002894:
 	strh r5, [r7, #0x22]
 	bl sub_00002864
 	ldr r1, [r7, #0x50]
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bne _00002894
 	strh r5, [r7, #0x20]
 	str r4, [r7, #4]
@@ -5117,8 +5006,7 @@ _00002960:
 	cmp r1, #0x73
 	bne _0000296E
 _0000296A:
-	@adds r4, r4, #2
-	.2byte 0x1CA4
+	.2byte 0x1CA4 @ adds r4, r4, #2
 	b _00002960
 _0000296E:
 	b _00002A8E
@@ -5132,8 +5020,7 @@ _00002970:
 	str r1, [r7, #0xc]
 	ldr r1, _00002C08 @=0x0003FFF8
 _00002980:
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bne _00002980
 	bl sub_000028BC
 	ldrh r1, [r6, #2]
@@ -5165,8 +5052,7 @@ _000029A4:
 	ldr r1, [r7]
 	ldr r0, _00002D44 @=0x6F646573
 	muls r1, r0, r1
-	@adds r1, r1, #1
-	.2byte 0x1C49
+	.2byte 0x1C49 @ adds r1, r1, #1
 	str r1, [r7]
 	ldr r0, [r3]
 	eors r0, r1
@@ -5188,13 +5074,11 @@ _000029DE:
 	beq _00002A1A
 	mov lr, r4
 	subs r4, r3, r1
-	@subs r4, r4, #2
-	.2byte 0x1EA4
+	.2byte 0x1EA4 @ subs r4, r4, #2
 	ldrh r1, [r7, #0x3a]
 	cmp r1, #0
 	beq _000029F6
-	@subs r4, r4, #2
-	.2byte 0x1EA4
+	.2byte 0x1EA4 @ subs r4, r4, #2
 _000029F6:
 	ldr r1, _00002D94 @=gUnknown_020000C0
 	adds r4, r4, r1
@@ -5209,8 +5093,7 @@ _000029FE:
 	lsls r1, r1, #0x10
 	bne _00002A8E
 _00002A0A:
-	@adds r5, r5, #2
-	.2byte 0x1CAD
+	.2byte 0x1CAD @ adds r5, r5, #2
 	b _000029FE
 _00002A0E:
 	bne _00002A0A
@@ -5223,13 +5106,11 @@ _00002A1A:
 	bl sub_00002AA6
 	cmp r4, #0
 	beq _00002A3C
-	@adds r3, r3, #2
-	.2byte 0x1C9B
+	.2byte 0x1C9B @ adds r3, r3, #2
 	ldrh r1, [r7, #0x3a]
 	cmp r1, #0
 	beq _00002A2C
-	@adds r3, r3, #2
-	.2byte 0x1C9B
+	.2byte 0x1C9B @ adds r3, r3, #2
 _00002A2C:
 	cmp r4, #2
 	bne _00002A36
@@ -5238,8 +5119,7 @@ _00002A2C:
 	bne _000029A4
 _00002A36:
 	movs r0, #0x65
-	@subs r4, r4, #1
-	.2byte 0x1E64
+	.2byte 0x1E64 @ subs r4, r4, #1
 	b _000029DE
 _00002A3C:
 	movs r4, #1
@@ -5258,8 +5138,7 @@ _00002A46:
 	bne _00002A8E
 	movs r4, #0
 _00002A5A:
-	@adds r3, r3, #2
-	.2byte 0x1C9B
+	.2byte 0x1C9B @ adds r3, r3, #2
 	b _00002A46
 _00002A5E:
 	bne _00002A5A
@@ -5308,8 +5187,7 @@ sub_00002AA4: @ 0x00002AA4
 sub_00002AA6: @ 0x00002AA6
 	movs r1, #0x96
 _00002AA8:
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bne _00002AA8
 	str r0, [r6]
 	strh r0, [r6, #0xa]
@@ -5352,10 +5230,8 @@ _00002AE8:
 	lsrs r1, r1, #0x1e
 	ldrb r0, [r7, #0x14]
 _00002AF0:
-	@adds r0, r0, #3
-	.2byte 0x1CC0
-	@subs r1, r1, #1
-	.2byte 0x1E49
+	.2byte 0x1CC0 @ adds r0, r0, #3
+	.2byte 0x1E49 @ subs r1, r1, #1
 	bpl _00002AF0
 	strb r0, [r7, #0x14]
 	lsrs r0, r0, #2
@@ -5381,8 +5257,7 @@ _00002B1E:
 	movs r2, #0x1f
 	bl sub_000007BC
 	ldrb r0, [r7, #0x12]
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	blt _00002B2E
 	strb r0, [r7, #0x12]
 	bne _00002AE4
@@ -5400,8 +5275,7 @@ sub_00002B34: @ 0x00002B34
 	ldr r0, [r7, #0x4c]
 	ldr r1, _00002D40 @=0x6177614B
 	muls r0, r1, r0
-	@adds r0, r0, #1
-	.2byte 0x1C40
+	.2byte 0x1C40 @ adds r0, r0, #1
 	str r0, [r7, #0x4c]
 	b _0000304A
 _00002B48:
@@ -5419,8 +5293,7 @@ _00002B48:
 	beq _00002B68
 	ldr r1, _00002C1C @=gUnknown_03000064
 	ldr r2, [r1, #0x24]
-	@adds r2, r2, #1
-	.2byte 0x1C52
+	.2byte 0x1C52 @ adds r2, r2, #1
 	bne _00002B6A
 _00002B68:
 	orrs r0, r3
@@ -5436,8 +5309,7 @@ _00002B6A:
 	ldrh r0, [r4, #0x10]
 	cmp r6, #2
 	bne _00002B8C
-	@subs r3, r3, #1
-	.2byte 0x1E5B
+	.2byte 0x1E5B @ subs r3, r3, #1
 	bpl _00002BA8
 _00002B86:
 	movs r6, #0
@@ -5446,16 +5318,14 @@ _00002B86:
 _00002B8C:
 	cmp r6, #1
 	bne _00002B9A
-	@subs r3, r3, #1
-	.2byte 0x1E5B
+	.2byte 0x1E5B @ subs r3, r3, #1
 	bpl _00002BA8
 _00002B94:
 	movs r6, #2
 	movs r3, #6
 	b _00002BA2
 _00002B9A:
-	@subs r3, r3, #1
-	.2byte 0x1E5B
+	.2byte 0x1E5B @ subs r3, r3, #1
 	bpl _00002BA8
 _00002B9E:
 	movs r6, #1
@@ -5573,8 +5443,7 @@ _00002C5E:
 _00002C6C:
 	bl sub_00002D5C
 	ldr r0, [r7, #0x30]
-	@subs r0, r0, #1
-	.2byte 0x1E40
+	.2byte 0x1E40 @ subs r0, r0, #1
 	bpl _00002C8A
 	cmp r6, #0
 	bne _00002C84
@@ -5609,8 +5478,7 @@ _00002C8C:
 	ldr r0, [r7, #0x38]
 	eors r0, r3
 	bne _00002D56
-	@subs r1, r1, #4
-	.2byte 0x1F09
+	.2byte 0x1F09 @ subs r1, r1, #4
 	ldrh r2, [r1]
 	ldrh r3, [r7, #0x22]
 	cmp r3, r2
@@ -5803,12 +5671,10 @@ _00002DF2:
 _00002E0C: @ 0x00002E0C
 	ldr r2, [r3, #0x38]
 	strh r1, [r2]
-	@adds r2, r2, #2
-	.2byte 0x1C92
+	.2byte 0x1C92 @ adds r2, r2, #2
 	str r2, [r3, #0x38]
 	ldr r2, [r3, #0x48]
-	@subs r2, r2, #1
-	.2byte 0x1E52
+	.2byte 0x1E52 @ subs r2, r2, #1
 	bne _00002E1C
 	add r0, pc, #0xC
 _00002E1C:
