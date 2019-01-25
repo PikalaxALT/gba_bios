@@ -49,7 +49,7 @@ _irq: @ 0x00000018
 	b irq_vector
 
 reserved_vector:
-	ldr sp, _000001C4
+	ldr sp, _000001C4 @=IWRAM_END - 0x10
 	push {ip, lr}
 	mrs ip, spsr
 	mrs lr, apsr
@@ -61,10 +61,10 @@ reserved_vector:
 	ldrbeq lr, [ip, #0xb4]
 	andseq lr, lr, #0x80
 	add lr, pc, #4
-	ldrne pc, _00000274
-	ldreq pc, _00000278
+	ldrne pc, _00000274 @=0x09FE2000
+	ldreq pc, _00000278 @=0x09FFC000
 _00000054:
-	ldr sp, _000001C0
+	ldr sp, _000001C0 @=IWRAM_END - 0x20
 	pop {ip, lr}
 	msr spsr_fc, ip
 	pop {ip, lr}
@@ -72,7 +72,7 @@ _00000054:
 reset_vector:
 	cmp lr, #0
 	moveq lr, #4
-	mov ip, #0x4000000
+	mov ip, #REG_BASE
 	ldrb ip, [ip, #0x300]
 	teq ip, #1
 	mrseq ip, apsr
@@ -84,10 +84,10 @@ reset_vector:
 swi_HardReset: @ 0x0000008C
 	mov r0, #0xdf
 	msr cpsr_fc, r0
-	mov r4, #0x4000000
-	strb r4, [r4, #0x208]
+	mov r4, #REG_BASE
+	strb r4, [r4, #REG_OFFSET_IME]
 	bl sub_000000E0
-	add r0, pc, #0x258
+	add r0, pc, #0x258  @ sub_00000300?
 	str r0, [sp, #0xfc]
 	ldr r0, _0000027C @=sub_00001928
 	add lr, pc, #0
@@ -95,7 +95,7 @@ swi_HardReset: @ 0x0000008C
 
 	ARM_FUNC_START swi_SoftReset
 swi_SoftReset: @ 0x000000B4
-	mov r4, #0x4000000
+	mov r4, #REG_BASE
 	ldrb r2, [r4, #-6]
 	bl sub_000000E0
 
@@ -112,17 +112,17 @@ swi_SoftRest_continue: @ 0x000000C0
 sub_000000E0:
 	mov r0, #0xd3
 	msr cpsr_fc, r0
-	ldr sp, _000001C0
+	ldr sp, _000001C0 @=IWRAM_END - 0x20
 	mov lr, #0
 	msr spsr_fc, lr
 	mov r0, #0xd2
 	msr cpsr_fc, r0
-	ldr sp, _000001BC
+	ldr sp, _000001BC @=IWRAM_END - 0x60
 	mov lr, #0
 	msr spsr_fc, lr
 	mov r0, #0x5f
 	msr cpsr_fc, r0
-	ldr sp, _000001B8
+	ldr sp, _000001B8 @=IWRAM_END - 0x100
 	add r0, pc, #1
 	bx r0
 
@@ -141,7 +141,7 @@ _00000120:
 	ARM_FUNC_START irq_vector
 irq_vector:
 	push {r0, r1, r2, r3, ip, lr}
-	mov r0, #0x4000000
+	mov r0, #REG_BASE
 	add lr, pc, #0
 	ldr pc, [r0, #-4]
 	pop {r0, r1, r2, r3, ip, lr}
@@ -172,7 +172,7 @@ swi_complete: @ 0x00000170
 
 	ARM_FUNC_START sub_0000018C
 sub_0000018C:
-	mov ip, #0x4000000
+	mov ip, #REG_BASE
 	mov r2, #4
 	strb r2, [ip, #1]
 	mov r2, #8
@@ -185,7 +185,7 @@ swi_Halt:
 swi_Stop: @ 0x000001A8
 	mov r2, #0x80
 swi_CustomHalt:
-	mov ip, #0x4000000
+	mov ip, #REG_BASE
 	strb r2, [ip, #0x301]
 	bx lr
 	.align 2, 0
@@ -306,7 +306,7 @@ _000002FC: .4byte 0x00000C63
 
 	ARM_FUNC_START sub_00000300
 sub_00000300: @ 0x00000300
-	mov r3, #0x4000000
+	mov r3, #REG_BASE
 	ldr r2, [r3, #0x200]
 	and r2, r2, r2, lsr #16
 	ands r1, r2, #0x80
@@ -336,7 +336,7 @@ _00000344:
 
 	ARM_FUNC_START sub_00000358
 sub_00000358: @ 0x00000358
-	mov ip, #0x4000000
+	mov ip, #REG_BASE
 	strb r3, [ip, #0x208]
 	ldrh r2, [ip, #-8]
 	ands r0, r1, r2
@@ -819,7 +819,7 @@ _000007C0:
 	orrs r4, r3
 	adds r3, r2, r7
 	lsls r6, r3, #1
-	ldr r3, _00000AD0 @=0x05000200
+	ldr r3, _00000AD0 @=PLTT + 0x0200
 	adds r3, r6, r3
 	strh r4, [r3]
 	.2byte 0x1E7F @ subs r7, r7, #1
@@ -831,9 +831,9 @@ swi_SoundBiasChange:
 	movs r1, #2
 	lsls r1, r1, #8
 	mov ip, r1
-	ldr r3, _00000AD4 @=0x04000088
+	ldr r3, _00000AD4 @=REG_SOUNDBIAS
 	ldrh r2, [r3]
-	ldr r3, _00000AD4 @=0x04000088
+	ldr r3, _00000AD4 @=REG_SOUNDBIAS
 	lsls r1, r2, #0x16
 	lsrs r1, r1, #0x16
 	cmp r0, #0
@@ -881,7 +881,7 @@ sub_00000840: @ 0x00000840
 
 	UNALIGNED_THUMB_FUNC_START sub_0000084A
 sub_0000084A: @ 0x0000084A
-	ldr r1, _00000AE8 @=0x05000038
+	ldr r1, _00000AE8 @=PLTT + 0x0038
 	cmp r0, #0
 	beq _00000854
 	lsls r0, r0, #9
@@ -916,7 +916,7 @@ sub_00000874: @ 0x00000874
 	add r0, sp, #8
 	stm r0!, {r5, r7}
 	ldr r0, _00000AF4 @=0x0BFE1FE0
-	ldr r3, _00000AF8 @=0x080000B4
+	ldr r3, _00000AF8 @=ROM_HEADER_DEVICE
 	ldrb r3, [r3]
 	lsrs r3, r3, #7
 	bne _0000088C
@@ -952,7 +952,7 @@ _000008C6:
 	ldr r2, _00000AD8 @=gUnknown_03000564
 	lsls r0, r7, #8
 	adds r0, r0, r2
-	ldr r3, _00000B08 @=0x06000040
+	ldr r3, _00000B08 @=VRAM + 0x00040
 	lsls r1, r7, #0xa
 	adds r1, r1, r3
 	add r2, sp, #8
@@ -964,14 +964,14 @@ _000008C6:
 _000008E4:
 	movs r4, #3
 _000008E6:
-	ldr r3, _00000B08 @=0x06000040
+	ldr r3, _00000B08 @=VRAM + 0x00040
 	lsls r0, r7, #1
 	adds r0, r0, r4
 	lsls r0, r0, #8
 	adds r0, r0, r3
 	ldr r3, _00000B0C @=gUnknown_30B0
 	ldrh r2, [r3, r7]
-	ldr r3, _00000B10 @=0x06010000
+	ldr r3, _00000B10 @=VRAM + 0x10000
 	lsls r1, r4, #4
 	adds r1, r1, r2
 	lsls r1, r1, #6
@@ -988,7 +988,7 @@ _000008E6:
 	bl sub_00000982
 	movs r2, #0x20
 	str r2, [sp, #4]
-	ldr r1, _00000B14 @=0x0600B880
+	ldr r1, _00000B14 @=VRAM + 0x0B880
 	str r1, [sp]
 	movs r3, #4
 	movs r2, #4
@@ -1040,7 +1040,7 @@ sub_00000974: @ 0x00000974
 sub_00000982: @ 0x00000982
 	push {r0, r4, r5, r6, r7, lr}
 	ldr r6, _00000B04 @=gUnknown_03001564
-	ldr r4, _00000B30 @=0x060024C0
+	ldr r4, _00000B30 @=VRAM + 0x024C0
 	movs r7, #2
 _0000098A:
 	movs r5, #0x34
@@ -1055,9 +1055,9 @@ _0000098C:
 	movs r7, #3
 _0000099C:
 	lsls r3, r7, #0xa
-	ldr r0, _00000B34 @=0x06002040
+	ldr r0, _00000B34 @=VRAM + 0x02040
 	adds r0, r0, r3
-	ldr r1, _00000B38 @=0x06016800
+	ldr r1, _00000B38 @=VRAM + 0x16800
 	adds r1, r1, r3
 	movs r2, #1
 	lsls r2, r2, #8
@@ -1197,33 +1197,33 @@ _00000AC0: .4byte gUnknown_03000088
 _00000AC4: .4byte gUnknown_3290
 _00000AC8: .4byte gUnknown_03003580
 _00000ACC: .4byte gUnknown_3200
-_00000AD0: .4byte 0x05000200
-_00000AD4: .4byte 0x04000088
+_00000AD0: .4byte PLTT + 0x0200
+_00000AD4: .4byte REG_SOUNDBIAS
 _00000AD8: .4byte gUnknown_03000564
 _00000ADC: .4byte gUnknown_332C
 _00000AE0: .4byte gUnknown_326C
 _00000AE4: .4byte gUnknown_369C
-_00000AE8: .4byte 0x05000038
+_00000AE8: .4byte PLTT + 0x0038
 _00000AEC: .4byte gUnknown_3264
 _00000AF0: .4byte gUnknown_30C0
 _00000AF4: .4byte 0x0BFE1FE0
-_00000AF8: .4byte 0x080000B4
+_00000AF8: .4byte ROM_HEADER_DEVICE
 _00000AFC: .4byte 0x0BFFFFE0
 _00000B00: .4byte 0x85000027
 _00000B04: .4byte gUnknown_03001564
-_00000B08: .4byte 0x06000040
+_00000B08: .4byte VRAM + 0x00040
 _00000B0C: .4byte gUnknown_30B0
-_00000B10: .4byte 0x06010000
-_00000B14: .4byte 0x0600B880
+_00000B10: .4byte VRAM + 0x10000
+_00000B14: .4byte VRAM + 0x0B880
 _00000B18: .4byte 0x00000202
 _00000B1C: .4byte 0x00007271
 _00000B20: .4byte gUnknown_03007FF0 + 7
 _00000B24: .4byte gUnknown_03000588
 _00000B28: .4byte 0x0000D082
 _00000B2C: .4byte gUnknown_30C8
-_00000B30: .4byte 0x060024C0
-_00000B34: .4byte 0x06002040
-_00000B38: .4byte 0x06016800
+_00000B30: .4byte VRAM + 0x024C0
+_00000B34: .4byte VRAM + 0x02040
+_00000B38: .4byte VRAM + 0x16800
 _00000B3C: .4byte 0x85000000
 _00000B40: .4byte 0x04000110
 _00000B44: .4byte 0x880E0000
@@ -2480,11 +2480,11 @@ _00001660: .4byte gUnknown_03007FC0
 swi_SoundDriverInit: @ 0x00001664
 	push {r3, r7, lr}
 	adds r7, r0, #0
-	ldr r1, _000016DC @=0x040000C0
+	ldr r1, _000016DC @=REG_DMA1DAD
 	movs r0, #0
 	strh r0, [r1, #6]
 	strh r0, [r1, #0x12]
-	ldr r0, _000016E0 @=0x04000080
+	ldr r0, _000016E0 @=REG_SOUNDCNT
 	movs r2, #0x8f
 	strh r2, [r0, #4]
 	ldr r2, _000016E4 @=0x0000A90E
@@ -2499,14 +2499,14 @@ swi_SoundDriverInit: @ 0x00001664
 	strb r2, [r0, #9]
 	adds r2, r7, r3
 	str r2, [r0, #0x3c]
-	ldr r0, _000016E8 @=0x040000A0
+	ldr r0, _000016E8 @=REG_FIFO_A
 	movs r3, #0x13
 	lsls r3, r3, #7
 	str r0, [r1]
 	adds r0, r7, r3
 	str r0, [r1, #8]
-	ldr r0, _000016EC @=0x040000A4
-	ldr r2, _000016F4 @=0x050003EC
+	ldr r0, _000016EC @=REG_FIFO_B
+	ldr r2, _000016F4 @=PLTT + 0x03EC
 	str r0, [r1, #0xc]
 	ldr r0, _000016F0 @=gUnknown_03007FC0
 	str r7, [r0, #0x30]
@@ -2537,13 +2537,13 @@ swi_SoundDriverInit: @ 0x00001664
 	pop {r3}
 	bx r3
 	.align 2, 0
-_000016DC: .4byte 0x040000C0
-_000016E0: .4byte 0x04000080
+_000016DC: .4byte REG_DMA1DAD
+_000016E0: .4byte REG_SOUNDCNT
 _000016E4: .4byte 0x0000A90E
-_000016E8: .4byte 0x040000A0
-_000016EC: .4byte 0x040000A4
+_000016E8: .4byte REG_FIFO_A
+_000016EC: .4byte REG_FIFO_B
 _000016F0: .4byte gUnknown_03007FC0
-_000016F4: .4byte 0x050003EC
+_000016F4: .4byte PLTT + 0x03EC
 _000016F8: .4byte sub_00002424
 _000016FC: .4byte sub_00001708
 _00001700: .4byte gUnknown_3738
@@ -2587,7 +2587,7 @@ sub_0000170A: @ 0x0000170A
 	adds r0, #1
 	asrs r0, r0, #1
 	str r0, [r7, #0x18]
-	ldr r4, _00001794 @=0x04000100
+	ldr r4, _00001794 @=REG_TM0CNT
 	movs r0, #0
 	strh r0, [r4, #2]
 	ldr r0, [r7, #0x10]
@@ -2618,7 +2618,7 @@ _00001784: .4byte gUnknown_03007FC0
 _00001788: .4byte gUnknown_31E8
 _0000178C: .4byte 0x00091D1B
 _00001790: .4byte 0x00001388
-_00001794: .4byte 0x04000100
+_00001794: .4byte REG_TM0CNT
 _00001798: .4byte 0x00044940
 
 	THUMB_FUNC_START swi_SoundDriverMode
@@ -2668,7 +2668,7 @@ _000017E2:
 	beq _000017FE
 	movs r3, #3
 	lsls r3, r3, #0x14
-	ldr r2, _00001820 @=0x04000080
+	ldr r2, _00001820 @=REG_SOUNDCNT
 	ands r1, r3
 	ldrb r3, [r2, #9]
 	lsrs r1, r1, #0xe
@@ -2693,7 +2693,7 @@ _00001812:
 	.align 2, 0
 _00001818: .4byte gUnknown_03007FC0
 _0000181C: .4byte 0x68736D53
-_00001820: .4byte 0x04000080
+_00001820: .4byte REG_SOUNDCNT
 
 	THUMB_FUNC_START swi_SoundChannelClear
 swi_SoundChannelClear: @ 0x00001824
@@ -2756,7 +2756,7 @@ swi_SoundDriverVSyncOff: @ 0x00001878
 	adds r0, #1
 	str r0, [r7]
 	movs r0, #0
-	ldr r1, _000018C0 @=0x040000C0
+	ldr r1, _000018C0 @=REG_DMA1DAD
 	movs r3, #0x35
 	strh r0, [r1, #6]
 	strh r0, [r1, #0x12]
@@ -2765,7 +2765,7 @@ swi_SoundDriverVSyncOff: @ 0x00001878
 	adds r1, r7, r3
 	str r0, [sp]
 	mov r0, sp
-	ldr r2, _000018C4 @=0x05000318
+	ldr r2, _000018C4 @=PLTT + 0x0318
 	bl swi_CPUSet
 	ldr r0, [r7]
 	subs r0, #1
@@ -2777,19 +2777,19 @@ _000018B0:
 	.align 2, 0
 _000018B8: .4byte gUnknown_03007FC0
 _000018BC: .4byte 0x68736D53
-_000018C0: .4byte 0x040000C0
-_000018C4: .4byte 0x05000318
+_000018C0: .4byte REG_DMA1DAD
+_000018C4: .4byte PLTT + 0x0318
 
 	THUMB_FUNC_START swi_SoundDriverVSyncOn
 swi_SoundDriverVSyncOn: @ 0x000018C8
 	movs r1, #0x5b
-	ldr r0, _000018D4 @=0x040000C0
+	ldr r0, _000018D4 @=REG_DMA1DAD
 	lsls r1, r1, #9
 	strh r1, [r0, #6]
 	strh r1, [r0, #0x12]
 	bx lr
 	.align 2, 0
-_000018D4: .4byte 0x040000C0
+_000018D4: .4byte REG_DMA1DAD
 
 	UNALIGNED_THUMB_FUNC_START swi_MIDIKey2Freq
 swi_MIDIKey2Freq: @ 0x000018D8
@@ -2851,7 +2851,7 @@ sub_00001928: @ 0x00001928
 	strb r5, [r0]
 	movs r0, #1
 	bl swi_SoundBiasChange
-	ldr r6, _00001D30 @=0x04000200
+	ldr r6, _00001D30 @=REG_IE
 	movs r0, #8
 	lsls r1, r0, #0x17
 	strh r5, [r6]
@@ -2877,7 +2877,7 @@ _00001962:
 	movs r0, #0x3b
 	lsls r0, r0, #9
 	str r0, [r1, #0x3c]
-	ldr r1, _00001D38 @=0x04000040
+	ldr r1, _00001D38 @=REG_WIN0H
 	ldr r0, _00001D34 @=0x10003F5F
 	str r0, [r1, #0x10]
 	bl sub_00000726
@@ -2947,7 +2947,7 @@ _000019FA:
 	ldr r0, [sp, #0x18]
 	bl sub_00000768
 	lsls r0, r5, #5
-	ldr r3, _00001D60 @=0x07000026
+	ldr r3, _00001D60 @=OAM + 0x26
 	movs r2, #1
 	adds r1, r0, r3
 	ldr r0, [sp, #0x24]
@@ -3092,7 +3092,7 @@ _00001B1C:
 	movs r0, #0xa
 	str r0, [sp, #0xc]
 	ldr r0, _00001D70 @=0x10001F5F
-	ldr r1, _00001D38 @=0x04000040
+	ldr r1, _00001D38 @=REG_WIN0H
 	str r0, [r1, #0x10]
 	b _00001BC4
 _00001B38:
@@ -3156,11 +3156,11 @@ _00001B72:
 	lsls r0, r0, #8
 	orrs r0, r1
 	str r1, [sp, #0x10]
-	ldr r1, _00001D38 @=0x04000040
+	ldr r1, _00001D38 @=REG_WIN0H
 	strh r0, [r1, #0x12]
 _00001BB2:
 	ldr r0, _00001D74 @=0x00003F27
-	ldr r1, _00001D38 @=0x04000040
+	ldr r1, _00001D38 @=REG_WIN0H
 	strh r0, [r1, #0xa]
 	ldr r0, _00001D78 @=0x00009802
 	b _00001BBE
@@ -3206,7 +3206,7 @@ _00001BF0:
 	ldr r0, [r0, #0x24]
 	cmn r0, r3
 	beq _00001C1C
-	ldr r0, _00001D8C @=0x04000130
+	ldr r0, _00001D8C @=REG_KEYINPUT
 	ldrb r0, [r0]
 	cmp r0, #0xf3
 	bne _00001C1C
@@ -3234,7 +3234,7 @@ _00001C32:
 	bl sub_000007BC
 _00001C3C:
 	bl sub_00002B34
-	ldr r1, _00001D30 @=0x04000200
+	ldr r1, _00001D30 @=REG_IE
 	movs r0, #1
 	strh r0, [r1, #8]
 	bl swi_VBlankIntrWait_t
@@ -3248,7 +3248,7 @@ _00001C3C:
 	lsls r0, r0, #8
 	orrs r0, r1
 	str r1, [sp, #0x10]
-	ldr r1, _00001D38 @=0x04000040
+	ldr r1, _00001D38 @=REG_WIN0H
 	strh r0, [r1, #0x12]
 _00001C62:
 	adds r7, #1
@@ -3286,7 +3286,7 @@ _00001C86:
 	ldrb r0, [r5, #0xb]
 	cmp r0, #0
 	beq _00001CC2
-	ldr r0, _00001D8C @=0x04000130
+	ldr r0, _00001D8C @=REG_KEYINPUT
 	ldrb r0, [r0]
 	mvns r0, r0
 	movs r3, #0xf3
@@ -3310,7 +3310,7 @@ _00001CC2:
 	b _00001C86
 _00001CD8:
 	ldr r1, _00001DA0 @=0x00103FBF
-	ldr r0, _00001D38 @=0x04000040
+	ldr r0, _00001D38 @=REG_WIN0H
 	str r1, [r0, #0x10]
 	str r6, [r0, #0x14]
 	movs r1, #0
@@ -3356,9 +3356,9 @@ _00001D2A: @ 0x00001D2A
 	b _00001DA4
 	.align 2, 0
 _00001D2C: .4byte 0x04000300
-_00001D30: .4byte 0x04000200
+_00001D30: .4byte REG_IE
 _00001D34: .4byte 0x10003F5F
-_00001D38: .4byte 0x04000040
+_00001D38: .4byte REG_WIN0H
 _00001D3C: .4byte gUnknown_03003B2C
 _00001D40: .4byte 0x00940A00
 _00001D44: .4byte gUnknown_0300372C
@@ -3368,7 +3368,7 @@ _00001D50: .4byte gUnknown_0300390C
 _00001D54: .4byte gUnknown_03003564
 _00001D58: .4byte gUnknown_03003580
 _00001D5C: .4byte gUnknown_030035F0
-_00001D60: .4byte 0x07000026
+_00001D60: .4byte OAM + 0x26
 _00001D64: .4byte gUnknown_369C
 _00001D68: .4byte 0xFE00FFFF
 _00001D6C: .4byte gUnknown_36EC
@@ -3379,7 +3379,7 @@ _00001D7C: .4byte 0x00001002
 _00001D80: .4byte gUnknown_3908
 _00001D84: .4byte gUnknown_39C0
 _00001D88: .4byte gUnknown_03000064
-_00001D8C: .4byte 0x04000130
+_00001D8C: .4byte REG_KEYINPUT
 _00001D90: .4byte gUnknown_389C
 _00001D94: .4byte gUnknown_03000088
 _00001D98: .4byte 0x03FFFFF0
@@ -3790,8 +3790,8 @@ swi_SoundDriverVSync: @ 0x0000210C
 	movs r0, #0
 	movs r1, #0xb6
 	lsls r1, r1, #8
-	ldr r2, _00002138 @=0x040000C6
-	ldr r3, _0000213C @=0x040000D2
+	ldr r2, _00002138 @=REG_DMA1CNT_H
+	ldr r3, _0000213C @=REG_DMA2CNT_H
 	strh r0, [r2]
 	strh r0, [r3]
 	strh r1, [r2]
@@ -3799,8 +3799,8 @@ swi_SoundDriverVSync: @ 0x0000210C
 _00002136:
 	bx lr
 	.align 2, 0
-_00002138: .4byte 0x040000C6
-_0000213C: .4byte 0x040000D2
+_00002138: .4byte REG_DMA1CNT_H
+_0000213C: .4byte REG_DMA2CNT_H
 _00002140: .4byte gUnknown_03007FF0
 _00002144: .4byte 0x68736D53
 
@@ -4846,7 +4846,7 @@ sub_0000284A: @ 0x0000284A
 	ldr r2, [r1, #0x40]
 	ldrb r3, [r2]
 	.2byte 0x1C52 @ adds r2, r2, #1
-	ldr r0, _00002860 @=0x04000060
+	ldr r0, _00002860 @=REG_SOUND1CNT
 	adds r0, r0, r3
 	bl sub_000026C6
 	strb r3, [r0]
@@ -4856,7 +4856,7 @@ sub_0000284A: @ 0x0000284A
 sub_0000285E: @ 0x0000285E
 	movs r0, r0
 	.align 2, 0
-_00002860: .4byte 0x04000060
+_00002860: .4byte REG_SOUND1CNT
 
 	THUMB_FUNC_START sub_00002864
 sub_00002864: @ 0x00002864
@@ -4957,7 +4957,7 @@ _000028FA:
 	str r4, [r7, #0xc]
 	bl sub_00000B9C
 	beq _0000296E
-	ldr r4, _00002C0C @=0x040000B0
+	ldr r4, _00002C0C @=REG_DMA0
 	ldrh r0, [r4, #0xa]
 	ldrh r2, [r4, #0x16]
 	orrs r0, r2
@@ -4967,7 +4967,7 @@ _000028FA:
 	orrs r0, r2
 	lsrs r0, r0, #0x10
 	bhs _0000296E
-	ldr r6, _00002C10 @=0x04000120
+	ldr r6, _00002C10 @=REG_SIOMULTI0
 	ldrb r0, [r7, #0x1e]
 	lsls r0, r0, #0x1c
 	lsrs r0, r0, #0x1d
@@ -5066,7 +5066,7 @@ _000029A4:
 	eors r0, r1
 	lsrs r2, r0, #0x10
 	strh r2, [r7, #0x3c]
-	ldr r6, _00002C10 @=0x04000120
+	ldr r6, _00002C10 @=REG_SIOMULTI0
 _000029DE:
 	bl _000028C6
 	ldr r1, [r7, #0x20]
@@ -5157,7 +5157,7 @@ _00002A70:
 	ldrh r5, [r7, #0x38]
 	ldr r2, [r7, #4]
 	bl sub_00002864
-	ldr r6, _00002C10 @=0x04000120
+	ldr r6, _00002C10 @=REG_SIOMULTI0
 	adds r0, r5, #0
 	bl sub_000028BC
 	movs r1, #0
@@ -5271,7 +5271,7 @@ sub_00002B34: @ 0x00002B34
 	push {r4, r5, r6, r7}
 	push {lr}
 	ldr r7, _00002DA0 @=gUnknown_0300000C
-	ldr r4, _00002C10 @=0x04000120
+	ldr r4, _00002C10 @=REG_SIOMULTI0
 	ldr r0, [r7, #0x4c]
 	ldr r1, _00002D40 @=0x6177614B
 	muls r0, r1, r0
@@ -5390,8 +5390,8 @@ sub_00002C00: @ 0x00002C00
 	bx lr
 	.align 2, 0
 _00002C08: .4byte 0x0003FFF8
-_00002C0C: .4byte 0x040000B0
-_00002C10: .4byte 0x04000120
+_00002C0C: .4byte REG_DMA0
+_00002C10: .4byte REG_SIOMULTI0
 _00002C14: .4byte sub_0000301C
 _00002C18: .4byte 0xC3871089
 _00002C1C: .4byte gUnknown_03000064
@@ -5561,7 +5561,7 @@ _00002D58:
 sub_00002D5C: @ 0x00002D5C
 	movs r0, #0
 _00002D5E:
-	ldr r3, _00003088 @=0x04000200
+	ldr r3, _00003088 @=REG_IE
 	strh r0, [r3, #8]
 	bx lr
 
@@ -5579,7 +5579,7 @@ sub_00002D68: @ 0x00002D68
 
 	THUMB_FUNC_START sub_00002D70
 sub_00002D70: @ 0x00002D70
-	ldr r2, _00003078 @=0x04000120
+	ldr r2, _00003078 @=REG_SIOMULTI0
 	ldrh r1, [r2]
 	ldr r3, _00003098 @=gUnknown_0300000C
 	ldrb r0, [r3, #0xe]
@@ -5863,14 +5863,14 @@ _00002F22:
 _00002F3C:
 	str r0, [r3, #0x34]
 _00002F3E:
-	ldr r2, _00003078 @=0x04000120
+	ldr r2, _00003078 @=REG_SIOMULTI0
 	strh r1, [r2, #0xa]
 	strh r1, [r2, #2]
 _00002F44:
 	ldrb r0, [r3, #0xe]
 	cmp r0, #2
 	bne _00002F50
-	ldr r2, _00003078 @=0x04000120
+	ldr r2, _00003078 @=REG_SIOMULTI0
 	ldr r0, _00002F60 @=0x10085088
 	strh r0, [r2, #8]
 _00002F50:
@@ -5988,7 +5988,7 @@ _00003006:
 	movs r1, #0
 	add r0, pc, #0x8
 _00003014:
-	ldr r2, _00003078 @=0x04000120
+	ldr r2, _00003078 @=REG_SIOMULTI0
 	strh r1, [r2, #0x38]
 _00003018:
 	str r0, [r3, #0x34]
@@ -6049,11 +6049,11 @@ _0000305E:
 _00003074:
 	b _00002B48
 	.align 2, 0
-_00003078: .4byte 0x04000120
+_00003078: .4byte REG_SIOMULTI0
 _0000307C: .4byte 0x0003FFF8
 _00003080: .4byte 0x6177614B
 _00003084: .4byte 0x6F646573
-_00003088: .4byte 0x04000200
+_00003088: .4byte REG_IE
 _0000308C: .4byte gUnknown_020000C0
 _00003090: .4byte gUnknown_020001F8
 _00003094: .4byte gUnknown_02000000

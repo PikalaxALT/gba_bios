@@ -40,6 +40,20 @@ OAM         = 0x07000000
 
 ROM         = 0x08000000
 
+ROM_HEADER_LOGO       = ROM + 0x04
+ROM_HEADER_TITLE      = ROM + 0xA0
+ROM_HEADER_GAME_CODE  = ROM + 0xAC
+ROM_HEADER_MAKER_CODE = ROM + 0xB0
+ROM_HEADER_MAGIC      = ROM + 0xB2
+ROM_HEADER_UNIT_CODE  = ROM + 0xB3
+ROM_HEADER_DEVICE     = ROM + 0xB4
+ROM_HEADER_SOFT_VER   = ROM + 0xBC
+ROM_HEADER_CHECKSUM   = ROM + 0xBD
+
+GPIOPortData          = ROM + 0xC4
+GPIOPortDirection     = ROM + 0xC6
+GPIOPortReadEnable    = ROM + 0xC8
+
 @-------------------------------------------------------------------------------
 @ I/O Register Offsets
 @-------------------------------------------------------------------------------
