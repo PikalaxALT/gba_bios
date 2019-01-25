@@ -10,7 +10,7 @@ OBJCOPY  := $(DEVKITARM)/bin/arm-none-eabi-objcopy
 
 CC1FLAGS := -mthumb-interwork -Wimplicit -Wparentheses -O2 -fhex-asm
 CPPFLAGS := -Itools/agbcc/include -iquote include -nostdinc -undef
-ASFLAGS  := -mcpu=arm7tdmi -mthumb-interwork -Iasminclude
+ASFLAGS  := -mcpu=arm7tdmi -march=armv4t -mthumb-interwork -Iasminclude
 
 
 #### Files ####
@@ -21,6 +21,8 @@ MAP      := $(ROM:.bin=.map)
 LDSCRIPT := ldscript.txt
 SOURCES  := asm/bios.s
 OFILES   := $(addsuffix .o, $(basename $(SOURCES)))
+AS_DEPS  := asm/macro.inc asm/gba_constants.inc
+LD_DEPS  := sym_ewram.txt sym_iwram.txt
 
 #### Main Targets ####
 
@@ -39,7 +41,7 @@ clean:
 .PRECIOUS: %.4bpp
 
 # Link ELF file
-$(ELF): $(OFILES) $(LDSCRIPT)
+$(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 	$(LD) -T $(LDSCRIPT) -Map $(MAP) $(OFILES) -o $@
 
 # Build GBA ROM
@@ -55,7 +57,7 @@ $(ELF): $(OFILES) $(LDSCRIPT)
 	$(AS) $(ASFLAGS) $*.s -o $*.o
 
 # Assembly source code
-%.o: %.s
+%.o: %.s $(AS_DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 # Graphics files

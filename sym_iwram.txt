@@ -1,0 +1,49 @@
+	. += 0xC;
+
+gUnknown_0300000C = .;
+	. += 0x58;
+
+gUnknown_03000064 = .;
+	. += 0x24;
+
+gUnknown_03000088 = .;
+	. += 0x4DC;
+
+gUnknown_03000564 = .;
+	. += 0x24;
+
+gUnknown_03000588 = .;
+	. += 0xFDC;
+
+gUnknown_03001564 = .;
+	. += 0x2000;
+
+gUnknown_03003564 = .;
+	. += 0x1C;
+
+gUnknown_03003580 = .;
+	. += 0x70;
+
+gUnknown_030035F0 = .;
+	. += 0xFC;
+
+gUnknown_030036EC = .;
+	. += 0x40;
+
+gUnknown_0300372C = .;
+	. += 0x1E0;
+
+gUnknown_0300390C = .;
+	. += 0x40;
+
+gUnknown_0300394C = .;
+	. += 0x1E0;
+
+gUnknown_03003B2C = .;
+	. += 0x4494;
+
+gUnknown_03007FC0 = .;
+	. += 0x30;
+
+gUnknown_03007FF0 = .;
+	. += 0x10;

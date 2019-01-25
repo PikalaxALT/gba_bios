@@ -23,3 +23,6 @@ Thumbs.db
 *.dump
 *.spr
 *.bak
+
+# Jetbrains IDE
+.idea/

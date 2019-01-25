@@ -8,7 +8,6 @@ SECTIONS
 		asm/bios.o
 	} = 0
 
-/*
 	. = 0x02000000;
 	.ewram_data :
 	ALIGN(4)
@@ -22,7 +21,6 @@ SECTIONS
 	{
 		INCLUDE "sym_iwram.txt"
 	} = 0
-*/
 
     /* Discard everything not specifically mentioned above. */
     /DISCARD/ :
