@@ -2162,7 +2162,7 @@ _0000141E:
 	.align 2, 0
 _00001424: .4byte 0x80000000
 _00001428: .4byte gUnknown_03007FC0
-_0000142C: .ascii "Smsh"
+_0000142C: .4byte 0x68736D53
 _00001430: .4byte sub_00002148
 
 	THUMB_FUNC_START swi_MusicPlayerStart
@@ -2238,7 +2238,7 @@ _000014B4:
 	pop {r3}
 	bx r3
 	.align 2, 0
-_000014BC: .ascii "Smsh"
+_000014BC: .4byte 0x68736D53
 
 	THUMB_FUNC_START swi_MusicPlayerStop
 swi_MusicPlayerStop: @ 0x000014C0
@@ -2272,7 +2272,7 @@ _000014F0:
 	pop {r3}
 	bx r3
 	.align 2, 0
-_000014F8: .ascii "Smsh"
+_000014F8: .4byte 0x68736D53
 
 	THUMB_FUNC_START swi_MusicPlayerContinue
 swi_MusicPlayerContinue: @ 0x000014FC
@@ -2288,7 +2288,7 @@ swi_MusicPlayerContinue: @ 0x000014FC
 _0000150E:
 	bx lr
 	.align 2, 0
-_00001510: .ascii "Smsh"
+_00001510: .4byte 0x68736D53
 
 	THUMB_FUNC_START swi_MusicPlayerFadeOut
 swi_MusicPlayerFadeOut: @ 0x00001514
@@ -2307,7 +2307,7 @@ _0000152A:
 	pop {r7}
 	bx lr
 	.align 2, 0
-_00001530: .ascii "Smsh"
+_00001530: .4byte 0x68736D53
 
 	THUMB_FUNC_START sub_00001534
 sub_00001534: @ 0x00001534
@@ -2554,7 +2554,7 @@ _000016F4: .4byte PLTT + 0x03EC
 _000016F8: .4byte sub_00002424
 _000016FC: .4byte sub_00001708
 _00001700: .4byte gJumpList
-_00001704: .ascii "Smsh"
+_00001704: .4byte 0x68736D53
 
 	THUMB_FUNC_START sub_00001708
 sub_00001708: @ 0x00001708
@@ -2699,7 +2699,7 @@ _00001812:
 	bx r3
 	.align 2, 0
 _00001818: .4byte gUnknown_03007FC0
-_0000181C: .ascii "Smsh"
+_0000181C: .4byte 0x68736D53
 _00001820: .4byte REG_SOUNDCNT
 
 	THUMB_FUNC_START swi_SoundChannelClear
@@ -2746,7 +2746,7 @@ _00001868:
 	bx r3
 	.align 2, 0
 _00001870: .4byte gUnknown_03007FC0
-_00001874: .ascii "Smsh"
+_00001874: .4byte 0x68736D53
 
 	THUMB_FUNC_START swi_SoundDriverVSyncOff
 swi_SoundDriverVSyncOff: @ 0x00001878
@@ -2783,7 +2783,7 @@ _000018B0:
 	bx r3
 	.align 2, 0
 _000018B8: .4byte gUnknown_03007FC0
-_000018BC: .ascii "Smsh"
+_000018BC: .4byte 0x68736D53
 _000018C0: .4byte REG_DMA1DAD
 _000018C4: .4byte PLTT + 0x0318
 
@@ -3797,7 +3797,7 @@ _00002136:
 _00002138: .4byte REG_DMA1CNT_H
 _0000213C: .4byte REG_DMA2CNT_H
 _00002140: .4byte gUnknown_03007FF0
-_00002144: .ascii "Smsh"
+_00002144: .4byte 0x68736D53
 
 	THUMB_FUNC_START sub_00002148
 sub_00002148: @ 0x00002148
@@ -4133,7 +4133,7 @@ _00002392:
 	.align 2, 0
 _000023A4: .4byte gUnknown_30D0
 _000023A8: .4byte gUnknown_03007FF0
-_000023AC: .ascii "Smsh"
+_000023AC: .4byte 0x68736D53
 
 	THUMB_FUNC_START sub_000023B0
 sub_000023B0: @ 0x000023B0
