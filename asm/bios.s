@@ -195,49 +195,49 @@ _000001C0: .4byte IWRAM_END - 0x20
 _000001C4: .4byte IWRAM_END - 0x10
 
 swi_branch_table:
-	.4byte swi_SoftReset
-	.4byte swi_RegisterRamReset
-	.4byte swi_Halt
-	.4byte swi_Stop
-	.4byte swi_IntrWait
-	.4byte swi_VBlankIntrWait
-	.4byte swi_Div
-	.4byte swi_DivArm
-	.4byte swi_Sqrt
-	.4byte swi_ArcTan
-	.4byte swi_ArcTan2
-	.4byte swi_CPUSet
-	.4byte swi_CPUFastSet
-	.4byte swi_BiosChecksum
-	.4byte swi_BgAffineSet
-	.4byte swi_ObjAffineSet
-	.4byte swi_BitUnPack
-	.4byte swi_LZ77UnCompWRAM
-	.4byte swi_LZ77UnCompVRAM
-	.4byte swi_HuffUnComp
-	.4byte swi_RLUnCompWRAM
-	.4byte swi_RLUnCompVRAM
-	.4byte swi_Diff8bitUnFilterWRAM
-	.4byte swi_Diff8bitUnFilterVRAM
-	.4byte swi_Diff16bitUnFilter
-	.4byte swi_SoundBiasChange
-	.4byte swi_SoundDriverInit
-	.4byte swi_SoundDriverMode
-	.4byte swi_SoundDriverMain
-	.4byte swi_SoundDriverVSync
-	.4byte swi_SoundChannelClear
-	.4byte swi_MIDIKey2Freq
-	.4byte swi_MusicPlayerOpen
-	.4byte swi_MusicPlayerStart
-	.4byte swi_MusicPlayerStop
-	.4byte swi_MusicPlayerContinue
-	.4byte swi_MusicPlayerFadeOut
-	.4byte swi_MultiBoot
-	.4byte swi_HardReset
-	.4byte swi_CustomHalt
-	.4byte swi_SoundDriverVSyncOff
-	.4byte swi_SoundDriverVSyncOn
-	.4byte swi_GetJumpList
+	.4byte swi_SoftReset            @ 0x00
+	.4byte swi_RegisterRamReset     @ 0x01
+	.4byte swi_Halt                 @ 0x02
+	.4byte swi_Stop                 @ 0x03
+	.4byte swi_IntrWait             @ 0x04
+	.4byte swi_VBlankIntrWait       @ 0x05
+	.4byte swi_Div                  @ 0x06
+	.4byte swi_DivArm               @ 0x07
+	.4byte swi_Sqrt                 @ 0x08
+	.4byte swi_ArcTan               @ 0x09
+	.4byte swi_ArcTan2              @ 0x0a
+	.4byte swi_CPUSet               @ 0x0b
+	.4byte swi_CPUFastSet           @ 0x0c
+	.4byte swi_BiosChecksum         @ 0x0d
+	.4byte swi_BgAffineSet          @ 0x0e
+	.4byte swi_ObjAffineSet         @ 0x0f
+	.4byte swi_BitUnPack            @ 0x10
+	.4byte swi_LZ77UnCompWRAM       @ 0x11
+	.4byte swi_LZ77UnCompVRAM       @ 0x12
+	.4byte swi_HuffUnComp           @ 0x13
+	.4byte swi_RLUnCompWRAM         @ 0x14
+	.4byte swi_RLUnCompVRAM         @ 0x15
+	.4byte swi_Diff8bitUnFilterWRAM @ 0x16
+	.4byte swi_Diff8bitUnFilterVRAM @ 0x17
+	.4byte swi_Diff16bitUnFilter    @ 0x18
+	.4byte swi_SoundBiasChange      @ 0x19
+	.4byte swi_SoundDriverInit      @ 0x1a
+	.4byte swi_SoundDriverMode      @ 0x1b
+	.4byte swi_SoundDriverMain      @ 0x1c
+	.4byte swi_SoundDriverVSync     @ 0x1d
+	.4byte swi_SoundChannelClear    @ 0x1e
+	.4byte swi_MIDIKey2Freq         @ 0x1f
+	.4byte swi_MusicPlayerOpen      @ 0x20
+	.4byte swi_MusicPlayerStart     @ 0x21
+	.4byte swi_MusicPlayerStop      @ 0x22
+	.4byte swi_MusicPlayerContinue  @ 0x23
+	.4byte swi_MusicPlayerFadeOut   @ 0x24
+	.4byte swi_MultiBoot            @ 0x25
+	.4byte swi_HardReset            @ 0x26
+	.4byte swi_CustomHalt           @ 0x27
+	.4byte swi_SoundDriverVSyncOff  @ 0x28
+	.4byte swi_SoundDriverVSyncOn   @ 0x29
+	.4byte swi_GetJumpList          @ 0x2a
 
 _00000274: .4byte 0x09FE2000
 _00000278: .4byte 0x09FFC000
@@ -2233,7 +2233,7 @@ _0000141E:
 	.align 2, 0
 _00001424: .4byte 0x80000000
 _00001428: .4byte gUnknown_03007FC0
-_0000142C: .4byte 0x68736D53
+_0000142C: .ascii "Smsh"
 _00001430: .4byte sub_00002148
 
 	THUMB_FUNC_START swi_MusicPlayerStart
@@ -2309,7 +2309,7 @@ _000014B4:
 	pop {r3}
 	bx r3
 	.align 2, 0
-_000014BC: .4byte 0x68736D53
+_000014BC: .ascii "Smsh"
 
 	THUMB_FUNC_START swi_MusicPlayerStop
 swi_MusicPlayerStop: @ 0x000014C0
@@ -2343,7 +2343,7 @@ _000014F0:
 	pop {r3}
 	bx r3
 	.align 2, 0
-_000014F8: .4byte 0x68736D53
+_000014F8: .ascii "Smsh"
 
 	THUMB_FUNC_START swi_MusicPlayerContinue
 swi_MusicPlayerContinue: @ 0x000014FC
@@ -2359,7 +2359,7 @@ swi_MusicPlayerContinue: @ 0x000014FC
 _0000150E:
 	bx lr
 	.align 2, 0
-_00001510: .4byte 0x68736D53
+_00001510: .ascii "Smsh"
 
 	THUMB_FUNC_START swi_MusicPlayerFadeOut
 swi_MusicPlayerFadeOut: @ 0x00001514
@@ -2378,7 +2378,7 @@ _0000152A:
 	pop {r7}
 	bx lr
 	.align 2, 0
-_00001530: .4byte 0x68736D53
+_00001530: .ascii "Smsh"
 
 	THUMB_FUNC_START sub_00001534
 sub_00001534: @ 0x00001534
@@ -2602,7 +2602,7 @@ swi_SoundDriverInit: @ 0x00001664
 	str r0, [r7, #0x2c]
 	str r0, [r7, #0x30]
 	str r0, [r7, #0x3c]
-	ldr r0, _00001700 @=gUnknown_3738
+	ldr r0, _00001700 @=gJumpList
 	str r0, [r7, #0x34]
 	movs r0, #1
 	lsls r0, r0, #0x12
@@ -2622,8 +2622,8 @@ _000016F0: .4byte gUnknown_03007FC0
 _000016F4: .4byte 0x050003EC
 _000016F8: .4byte sub_00002424
 _000016FC: .4byte sub_00001708
-_00001700: .4byte gUnknown_3738
-_00001704: .4byte 0x68736D53
+_00001700: .4byte gJumpList
+_00001704: .ascii "Smsh"
 
 	THUMB_FUNC_START sub_00001708
 sub_00001708: @ 0x00001708
@@ -2768,7 +2768,7 @@ _00001812:
 	bx r3
 	.align 2, 0
 _00001818: .4byte gUnknown_03007FC0
-_0000181C: .4byte 0x68736D53
+_0000181C: .ascii "Smsh"
 _00001820: .4byte 0x04000080
 
 	THUMB_FUNC_START swi_SoundChannelClear
@@ -2815,7 +2815,7 @@ _00001868:
 	bx r3
 	.align 2, 0
 _00001870: .4byte gUnknown_03007FC0
-_00001874: .4byte 0x68736D53
+_00001874: .ascii "Smsh"
 
 	THUMB_FUNC_START swi_SoundDriverVSyncOff
 swi_SoundDriverVSyncOff: @ 0x00001878
@@ -2852,7 +2852,7 @@ _000018B0:
 	bx r3
 	.align 2, 0
 _000018B8: .4byte gUnknown_03007FC0
-_000018BC: .4byte 0x68736D53
+_000018BC: .ascii "Smsh"
 _000018C0: .4byte 0x040000C0
 _000018C4: .4byte 0x05000318
 
@@ -3490,7 +3490,7 @@ sub_00001DBC: @ 0x00001DBC
 swi_SoundDriverMain: @ 0x00001DC4
 	ldr r0, _00002140 @=gUnknown_03007FF0
 	ldr r0, [r0]
-	ldr r2, _00002144 @=0x68736D53
+	ldr r2, _00002144 @=0x68736D53 "Smsh"
 	ldr r3, [r0]
 	cmp r2, r3
 	beq _00001DD2
@@ -3839,7 +3839,7 @@ sub_000020E4:
 	b _00001EB0
 _000020EE:
 	ldr r0, [sp, #0x14]
-	ldr r3, _00002144 @=0x68736D53
+	ldr r3, _00002144 @=0x68736D53 "Smsh"
 	str r3, [r0]
 	add sp, #0x18
 	pop {r0, r1, r2, r3, r4, r5, r6, r7}
@@ -3860,7 +3860,7 @@ _00002108: .4byte 0x00000630
 swi_SoundDriverVSync: @ 0x0000210C
 	ldr r0, _00002140 @=gUnknown_03007FF0
 	ldr r0, [r0]
-	ldr r2, _00002144 @=0x68736D53
+	ldr r2, _00002144 @=0x68736D53 "Smsh"
 	ldr r3, [r0]
 	cmp r2, r3
 	bne _00002136
@@ -3886,11 +3886,11 @@ _00002136:
 _00002138: .4byte 0x040000C6
 _0000213C: .4byte 0x040000D2
 _00002140: .4byte gUnknown_03007FF0
-_00002144: .4byte 0x68736D53
+_00002144: .ascii "Smsh"
 
 	THUMB_FUNC_START sub_00002148
 sub_00002148: @ 0x00002148
-	ldr r2, _000023AC @=0x68736D53
+	ldr r2, _000023AC @=0x68736D53 "Smsh"
 	ldr r3, [r0, #0x34]
 	cmp r2, r3
 	beq _00002152
@@ -4217,7 +4217,7 @@ _00002388:
 	adds r5, r5, r0
 	bgt _000022E2
 _00002392:
-	ldr r0, _000023AC @=0x68736D53
+	ldr r0, _000023AC @=0x68736D53 "Smsh"
 	str r0, [r7, #0x34]
 	pop {r0, r1, r2, r3, r4, r5, r6, r7}
 	mov r8, r0
@@ -4229,7 +4229,7 @@ _00002392:
 	.align 2, 0
 _000023A4: .4byte gUnknown_30D0
 _000023A8: .4byte gUnknown_03007FF0
-_000023AC: .4byte 0x68736D53
+_000023AC: .ascii "Smsh"
 
 	THUMB_FUNC_START sub_000023B0
 sub_000023B0: @ 0x000023B0
@@ -4664,8 +4664,8 @@ _00002688:
 	UNALIGNED_THUMB_FUNC_START swi_GetJumpList
 swi_GetJumpList: @ 0x00002692
 	mov ip, lr
-	movs r1, #0x24
-	ldr r2, _000026C0 @=gUnknown_3738
+	movs r1, (gJumpListEnd - gJumpList) / 4
+	ldr r2, _000026C0 @=gJumpList
 _00002698:
 	ldr r3, [r2]
 	bl sub_000026AA
@@ -4684,7 +4684,7 @@ sub_000026AA:
 	push {r0}
 	lsrs r0, r2, #0x19
 	bne _000026BC
-	ldr r0, _000026C0 @=gUnknown_3738
+	ldr r0, _000026C0 @=gJumpList
 	cmp r2, r0
 	blo _000026BA
 	lsrs r0, r2, #0xe
@@ -4695,7 +4695,7 @@ _000026BC:
 	pop {r0}
 	bx lr
 	.align 2, 0
-_000026C0: .4byte gUnknown_3738
+_000026C0: .4byte gJumpList
 
 	THUMB_FUNC_START sub_000026C4
 sub_000026C4: @ 0x000026C4
@@ -6355,8 +6355,9 @@ gUnknown_36EC:
 	THUMB_INTERWORK_VENEER swi_ObjAffineSet
 
 	.section .rodata
-	.global gUnknown_3738
-gUnknown_3738:
+	.global gJumpList
+	.global gJumpListEnd
+gJumpList:
 	.4byte sub_00002664
 	.4byte sub_000026CE
 	.4byte sub_000026EE
@@ -6393,7 +6394,7 @@ gUnknown_3738:
 	.4byte sub_0000159C
 	.4byte sub_000023C6
 	.4byte sub_000023B0
-
+gJumpListEnd:
 	.4byte gUnknown_3C00
 	.4byte gUnknown_382C
 
