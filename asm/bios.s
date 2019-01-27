@@ -866,17 +866,18 @@ _0000082C:
 	UNALIGNED_THUMB_FUNC_START sub_0000082E
 sub_0000082E: @ 0x0000082E
 	ldr r1, _00000AD8 @=gUnknown_03000564
+	@ movs r2, #0x370
 	movs r2, #0x37
 	lsls r2, r2, #4
 	ldr r0, _00000ADC @=gUnknown_332C
-	b _00000858
+	b safecopy32
 
 	THUMB_FUNC_START sub_00000838
 sub_00000838: @ 0x00000838
 	ldr r1, _00000AD8 @=gUnknown_03000564
 	movs r2, #0x24
 	ldr r0, _00000AE0 @=gUnknown_326C
-	b _00000858
+	b safecopy32
 
 	THUMB_FUNC_START sub_00000840
 sub_00000840: @ 0x00000840
@@ -884,7 +885,7 @@ sub_00000840: @ 0x00000840
 	lsls r1, r1, #0x18
 	movs r2, #0x50
 	ldr r0, _00000AE4 @=gUnknown_369C
-	b _00000858
+	b safecopy32
 
 	UNALIGNED_THUMB_FUNC_START sub_0000084A
 sub_0000084A: @ 0x0000084A
@@ -896,13 +897,14 @@ sub_0000084A: @ 0x0000084A
 _00000854:
 	movs r2, #8
 	ldr r0, _00000AEC @=gUnknown_3264
-_00000858:
+safecopy32:
 	push {r4, r5, lr}
 	adds r2, r2, r1
 _0000085C:
 	ldr r3, _00000ACC @=gUnknown_3200
 	cmp r0, r3
 	blt _00000872
+	@ movs r3, #BIOS_END
 	movs r3, #4
 	lsls r3, r3, #0xc
 	cmp r0, r3
@@ -6133,7 +6135,7 @@ gNintendoLogo:
 	.byte 0xD6, 0x25, 0xE4, 0x8B, 0x38, 0x0A, 0xAC, 0x72, 0x21, 0xD4, 0xF8, 0x07
 
 	.global gUnknown_332C
-gUnknown_332C:
+gUnknown_332C: @ size: 0x370
 	.byte 0x24, 0xC0, 0x03, 0x00, 0x0F, 0x00, 0x80, 0x01, 0x00, 0x41, 0x01, 0x42, 0x02, 0x05, 0xC2, 0x43
 	.byte 0x43, 0x01, 0x43, 0xC4, 0x0A, 0x0F, 0xC3, 0x03, 0xC3, 0x02, 0xC3, 0x09, 0x0B, 0x04, 0x07, 0x08
 	.byte 0x06, 0x0D, 0x0C, 0x0E, 0x00, 0x03, 0x54, 0x38, 0x02, 0x0C, 0x1C, 0x48, 0xC3, 0xC0, 0x56, 0x99
@@ -6206,9 +6208,24 @@ gUnknown_369C:
 
 	.global gUnknown_36EC
 gUnknown_36EC:
-	.byte 0xFE, 0xFE, 0xFE, 0xFF
-	.byte 0xFF, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0xFF, 0xFF
-	.byte 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x00, 0xFF, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+	.byte -2, -2
+	.byte -2, -1
+	.byte -1, -1
+	.byte  0, -1
+	.byte  0,  0
+	.byte  1,  0
+	.byte  1,  1
+	.byte  1,  2
+	.byte  2,  2
+	.byte -1, -1
+	.byte  0, -1
+	.byte  0,  0
+	.byte  1,  0
+	.byte  1,  1
+	.byte  0, -1
+	.byte  0,  0
+	.byte  1,  0
+	.byte  0,  0
 
 	THUMB_INTERWORK_VENEER swi_Halt
 	THUMB_INTERWORK_VENEER Dispcnt_Something_And_Custom_Halt

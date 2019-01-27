@@ -64,6 +64,8 @@ GPIOPortData          = ROM + 0xC4
 GPIOPortDirection     = ROM + 0xC6
 GPIOPortReadEnable    = ROM + 0xC8
 
+BIOS_END = 0x4000
+
 @-------------------------------------------------------------------------------
 @ I/O Register Offsets
 @-------------------------------------------------------------------------------
