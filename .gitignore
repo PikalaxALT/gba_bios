@@ -11,7 +11,6 @@ src/**/*.s
 *.lz
 
 # Tools
-tools/*
 *.exe
 
 # Emulator save files
