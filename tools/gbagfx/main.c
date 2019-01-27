@@ -12,6 +12,7 @@
 #include "lz.h"
 #include "rl.h"
 #include "font.h"
+#include "huff.h"
 
 struct CommandHandler
 {
@@ -411,6 +412,61 @@ void HandleRLDecompressCommand(char *inputPath, char *outputPath, int argc UNUSE
     free(uncompressedData);
 }
 
+void HandleHuffCompressCommand(char *inputPath, char *outputPath, int argc, char **argv)
+{
+    int fileSize;
+    int bitDepth = 8;
+
+    for (int i = 3; i < argc; i++)
+    {
+        char *option = argv[i];
+
+        if (strcmp(option, "-depth") == 0)
+        {
+            if (i + 1 >= argc)
+                FATAL_ERROR("No size following \"-depth\".\n");
+
+            i++;
+
+            if (!ParseNumber(argv[i], NULL, 10, &bitDepth))
+                FATAL_ERROR("Failed to parse bit depth.\n");
+
+            if (bitDepth != 4 && bitDepth != 8)
+                FATAL_ERROR("GBA only supports bit depth of 4 or 8.\n");
+        }
+        else
+        {
+            FATAL_ERROR("Unrecognized option \"%s\".\n", option);
+        }
+    }
+
+    unsigned char *buffer = ReadWholeFile(inputPath, &fileSize);
+
+    int compressedSize;
+    unsigned char *compressedData = HuffCompress(buffer, fileSize, &compressedSize, bitDepth);
+
+    free(buffer);
+
+    WriteWholeFile(outputPath, compressedData, compressedSize);
+
+    free(compressedData);
+}
+
+void HandleHuffDecompressCommand(char *inputPath, char *outputPath, int argc UNUSED, char **argv UNUSED)
+{
+    int fileSize;
+    unsigned char *buffer = ReadWholeFile(inputPath, &fileSize);
+
+    int uncompressedSize;
+    unsigned char *uncompressedData = HuffDecompress(buffer, fileSize, &uncompressedSize);
+
+    free(buffer);
+
+    WriteWholeFile(outputPath, uncompressedData, uncompressedSize);
+
+    free(uncompressedData);
+}
+
 int main(int argc, char **argv)
 {
     if (argc < 3)
@@ -437,6 +493,8 @@ int main(int argc, char **argv)
         { "lz", NULL, HandleLZDecompressCommand },
         { NULL, "rl", HandleRLCompressCommand },
         { "rl", NULL, HandleRLDecompressCommand },
+        { NULL, "huff", HandleHuffCompressCommand },
+        { "huff", NULL, HandleHuffDecompressCommand },
         { NULL, NULL, NULL }
     };
 

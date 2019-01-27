@@ -9,6 +9,8 @@ src/**/*.s
 *.8bpp
 *.gbapal
 *.lz
+%.huff
+%.rl
 
 # Tools
 *.exe

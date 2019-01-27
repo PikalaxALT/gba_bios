@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c11 -O2 -s -DPNG_SKIP_SETJMP_CHECK
 
 LIBS = -lpng -lz
 
-SRCS = main.c convert_png.c gfx.c jasc_pal.c lz.c rl.c util.c font.c
+SRCS = main.c convert_png.c gfx.c jasc_pal.c lz.c rl.c util.c font.c huff.c
 
 .PHONY: all clean
 

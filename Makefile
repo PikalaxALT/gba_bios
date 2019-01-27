@@ -21,8 +21,16 @@ MAP      := $(ROM:.bin=.map)
 LDSCRIPT := ldscript.txt
 SOURCES  := asm/bios.s
 OFILES   := $(addsuffix .o, $(basename $(SOURCES)))
-AS_DEPS  := asm/macro.inc asm/gba_constants.inc
 LD_DEPS  := sym_ewram.txt sym_iwram.txt
+
+# Secondary expansion is required for dependency variables in object rules.
+.SECONDEXPANSION:
+# Clear the default suffixes
+.SUFFIXES:
+# Don't delete intermediate files
+.SECONDARY:
+# Delete files that weren't built properly
+.DELETE_ON_ERROR:
 
 #### Main Targets ####
 
@@ -51,13 +59,13 @@ $(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 	truncate -s $(shell echo $$((0x4000))) $(ROM)
 
 # C source code
-%.o: %.c
-	$(CPP) $(CPPFLAGS) $< | $(CC1) $(CC1FLAGS) -o $*.s
-	echo '.ALIGN 2, 0' >> $*.s
-	$(AS) $(ASFLAGS) $*.s -o $*.o
+src/%.o: src/%.c
+	$(CPP) $(CPPFLAGS) $< | $(CC1) $(CC1FLAGS) -o src/$*.s
+	$(AS) $(ASFLAGS) $*.s -o $@
 
 # Assembly source code
-%.o: %.s $(AS_DEPS)
+asm/%.o: ASM_DEPS = $(shell tools/scaninc/scaninc asm/$*.s)
+asm/%.o: asm/%.s $$(ASM_DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 # Graphics files
@@ -67,5 +75,9 @@ $(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 	$(GBAGFX) $< $@
 %.lz: %
 	$(GBAGFX) $< $@
+%.huff: %
+	$(GBAGFX) $< $@
+
+%.inc: ;
 
 include gfxdep.mk
