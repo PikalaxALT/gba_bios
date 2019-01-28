@@ -102,6 +102,8 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
 
 static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
     HuffNode_t * traversal = calloc(2 * nitems - 1, sizeof(HuffNode_t));
+    if (traversal == NULL)
+        FATAL_ERROR("fatal error while compressing Huff file");
     int i, j, k;
     i = 1;
     bool isTerminal = false;
