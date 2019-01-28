@@ -110,56 +110,76 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
     }
 }
 
-static void lateral_traversal() {
-
-}
-
 static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
-    HuffNode_t * traversal = calloc(nitems, sizeof(HuffNode_t));
-    traversal[0] = tree[0];
-    int nitems_cur_level = 1;
+    HuffNode_t * traversal = calloc(2 * nitems - 1, sizeof(HuffNode_t));
     int i, j, k;
     i = 1;
-    for (int depth = 1; depth < 8; depth++) {
-        int nitems_next_level = 0;
+    bool isTerminal = false;
+    for (int i = 0; i < 2 * nitems - 1; i++) {
+        traversal[i].header.value = 0x7FFF;
+    }
+    traversal[0] = *tree;
+    for (int depth = 1; depth < 8 && !isTerminal; depth++) {
+        isTerminal = true;
         for (j = 0; j < 1 << depth; j++) {
             HuffNode_t * currNode = traversal;
-            HuffNode_t * parent;
+            HuffNode_t * parent = NULL;
             for (k = 0; k < depth; k++) {
-                if (currNode->header.isLeaf)
+                fprintf(stderr, "i = %d, depth = %d, j = %d, k = %d\n", i, depth, j, k);
+                if (currNode->header.isLeaf) {
+                    fprintf(stderr, "isLeaf depth %d\n", k);
                     break;
+                }
                 parent = currNode;
-                if ((j >> k) & 1)
+                if ((j >> (depth - k - 1)) & 1)
                     currNode = currNode->branch.right;
                 else
                     currNode = currNode->branch.left;
+//                fprintf(stderr, "%d\n", (j >> (depth - k - 1)) & 1);
             }
             if (k == depth) {
-                bool rightFork = ((j >> (depth - 1)) & 1);
+                if (!currNode->header.isLeaf)
+                    isTerminal = false;
+                bool rightFork = (j & 1) == 1;
                 traversal[i] = *currNode;
-                traversal[i].header.value = (parent - traversal) / sizeof(HuffNode_t);
                 traversal[i].header.isRightFork = rightFork;
-                if (rightFork)
-                    parent->branch.right = traversal + i;
-                else
-                    parent->branch.left = traversal + i;
+                int right_i = parent - traversal;
+                if (parent != NULL) {
+                    if (depth > 1)
+                        assert(right_i > 0);
+                    traversal[i].header.value = right_i;
+                    if (rightFork)
+                        parent->branch.right = traversal + i;
+                    else
+                        parent->branch.left = traversal + i;
+                } else {
+                    traversal[i].header.value = -1u;
+                }
                 i++;
-                if (i == nitems)
-                    break;
+                fprintf(stderr, "%d --> %d\n", right_i, i);
             }
         }
-        if (i == nitems)
-            break;
     }
 
+    traversal[0].header.value = -1;
     traversal[0].header.isRightFork = true;
-    dest[4] = (nitems - 1) / 2;
-    dest[5] = 0;
-    for (i = 1; i < nitems; i++) {
+    dest[4] = nitems - 1;
+
+    for (i = 0; i < 2 * nitems - 1; i++) {
+        if (traversal[i].header.value == 0x7FFF)
+            break;
         if (traversal[i].header.isLeaf) {
-            
+            dest[5 + i] = traversal[i].leaf.key;
+        } else {
+            int right_i = traversal[i].branch.right - traversal;
+            fprintf(stderr, "%d\t%d\n", i, right_i);
+            dest[5 + i] = (((right_i - i) / 2) - 1) & 0x3F;
+            dest[5 + i] |= (0x80 * traversal[i].branch.left->header.isLeaf);
+            dest[5 + i] |= (0x40 * traversal[i].branch.right->header.isLeaf);
         }
     }
+
+    free(traversal);
 }
 
 static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding * encoding, int value, uint32_t * buff, int * buffBits) {
@@ -258,14 +278,12 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
             goto fail;
     }
 
-    int treeSize = 0;
     create_bit_encoding(&freqs->branch, encoding, 0, 0);
-    treeSize = nitems * 2;
     write_tree(dest, freqs, nitems);
     free(tree);
     free(freqs);
 
-    int destPos = 6 + treeSize;
+    int destPos = 4 + nitems * 2;
     uint32_t destBuf = 0;
     int destBitPos = 0;
 

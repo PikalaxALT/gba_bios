@@ -429,7 +429,7 @@ void HandleRLDecompressCommand(char *inputPath, char *outputPath, int argc UNUSE
 void HandleHuffCompressCommand(char *inputPath, char *outputPath, int argc, char **argv)
 {
     int fileSize;
-    int bitDepth = 8;
+    int bitDepth = 4;
 
     for (int i = 3; i < argc; i++)
     {
