@@ -103,7 +103,7 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
 static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
     HuffNode_t * traversal = calloc(2 * nitems - 1, sizeof(HuffNode_t));
     if (traversal == NULL)
-        FATAL_ERROR("fatal error while compressing Huff file");
+        FATAL_ERROR("Fatal error while compressing Huff file.\n");
     int i, j, k;
     i = 1;
     bool isTerminal = false;
@@ -159,7 +159,9 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
             dest[5 + i] = traversal[i].leaf.key;
         } else {
             int right_i = traversal[i].branch.right - traversal;
-            dest[5 + i] = (((right_i - i) / 2) - 1) & 0x3F;
+            dest[5 + i] = (((right_i - i) / 2) - 1);
+            if (dest[5 + i] & 0xC0)
+                FATAL_ERROR("Fatal error while compressing Huff file: unable to encode binary tree.\n");
             dest[5 + i] |= (0x80 * traversal[i].branch.left->header.isLeaf);
             dest[5 + i] |= (0x40 * traversal[i].branch.right->header.isLeaf);
         }
@@ -192,7 +194,7 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
     if (srcSize <= 0)
         goto fail;
 
-    int worstCaseDestSize = 4 + (1 << bitDepth) + srcSize;
+    int worstCaseDestSize = 4 + (2 << bitDepth) + srcSize * 3;
 
     unsigned char *dest = malloc(worstCaseDestSize);
     if (dest == NULL)
