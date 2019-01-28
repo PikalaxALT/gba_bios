@@ -295,7 +295,7 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
     return dest;
 
 fail:
-    FATAL_ERROR("Fatal error while decompressing Huff file.\n");
+    FATAL_ERROR("Fatal error while compressing Huff file.\n");
 }
 
 unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompressedSize_p) {
