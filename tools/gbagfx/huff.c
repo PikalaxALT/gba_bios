@@ -85,9 +85,6 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
     uint32_t curLeftEncoding = curBitstream << 1;
     uint32_t curRightEncoding = curLeftEncoding | 1;
 
-    for (int i = 0; i < depth - 1; i++) {
-        fputc('\t', stderr);
-    }
     if (left->header.isLeaf) {
         encoding[left->leaf.key].nbits = depth;
         encoding[left->leaf.key].bitstring = curLeftEncoding;
@@ -95,9 +92,6 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
         create_bit_encoding(&left->branch, encoding, curLeftEncoding, depth);
     }
 
-    for (int i = 0; i < depth - 1; i++) {
-        fputc('\t', stderr);
-    }
     if (right->header.isLeaf) {
         encoding[right->leaf.key].nbits = depth;
         encoding[right->leaf.key].bitstring = curRightEncoding;
