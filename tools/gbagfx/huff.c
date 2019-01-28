@@ -114,32 +114,52 @@ static void lateral_traversal() {
 
 }
 
-static int write_tree(unsigned char * dest, HuffNode_t * tree, int offset) {
-    static int skip = 0;
-
-    int next;
-
-    HuffNode_t * left = tree->branch.left;
-    HuffNode_t * right = tree->branch.right;
-
-    dest[offset] = (skip - (offset - 4) / 2) & 0x3F;
-    skip++;
-    next = 4 + skip * 2;
-
-    if (left->header.isLeaf) {
-        dest[offset] |= 0x80;
-        dest[next] = left->leaf.key;
-    } else {
-        write_tree(dest, left, next);
+static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
+    HuffNode_t * traversal = calloc(nitems, sizeof(HuffNode_t));
+    traversal[0] = tree[0];
+    int nitems_cur_level = 1;
+    int i, j, k;
+    i = 1;
+    for (int depth = 1; depth < 8; depth++) {
+        int nitems_next_level = 0;
+        for (j = 0; j < 1 << depth; j++) {
+            HuffNode_t * currNode = traversal;
+            HuffNode_t * parent;
+            for (k = 0; k < depth; k++) {
+                if (currNode->header.isLeaf)
+                    break;
+                parent = currNode;
+                if ((j >> k) & 1)
+                    currNode = currNode->branch.right;
+                else
+                    currNode = currNode->branch.left;
+            }
+            if (k == depth) {
+                bool rightFork = ((j >> (depth - 1)) & 1);
+                traversal[i] = *currNode;
+                traversal[i].header.value = (parent - traversal) / sizeof(HuffNode_t);
+                traversal[i].header.isRightFork = rightFork;
+                if (rightFork)
+                    parent->branch.right = traversal + i;
+                else
+                    parent->branch.left = traversal + i;
+                i++;
+                if (i == nitems)
+                    break;
+            }
+        }
+        if (i == nitems)
+            break;
     }
 
-    if (right->header.isLeaf) {
-        dest[offset] |= 0x40;
-        dest[next + 1] = right->leaf.key;
-    } else {
-        write_tree(dest, right, next + 1);
+    traversal[0].header.isRightFork = true;
+    dest[4] = (nitems - 1) / 2;
+    dest[5] = 0;
+    for (i = 1; i < nitems; i++) {
+        if (traversal[i].header.isLeaf) {
+            
+        }
     }
-    return skip;
 }
 
 static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding * encoding, int value, uint32_t * buff, int * buffBits) {
@@ -173,9 +193,6 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
         goto fail;
 
     int nitems = 1 << bitDepth;
-    HuffNode_t * tree = calloc(nitems * 2 - 1, sizeof(HuffNode_t));
-    if (tree == NULL)
-        goto fail;
 
     HuffNode_t * freqs = calloc(nitems, sizeof(HuffNode_t));
     if (freqs == NULL)
@@ -200,11 +217,30 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
         }
     }
 
+    if (!msort(freqs, nitems, sizeof(HuffNode_t), cmp_tree))
+        goto fail;
+
+    for (int i = 0; i < nitems; i++) {
+        if (freqs[i].header.value != 0) {
+            if (i > 0) {
+                for (int j = i; j < nitems; j++) {
+                    freqs[j - i] = freqs[j];
+                }
+                nitems -= i;
+            }
+            break;
+        }
+        if (i == nitems - 1)
+            goto fail;
+    }
+
+    HuffNode_t * tree = calloc(nitems * 2 - 1, sizeof(HuffNode_t));
+    if (tree == NULL)
+        goto fail;
+
     HuffNode_t * endptr = freqs + nitems - 2;
 
     for (int i = 0; i < nitems - 1; i++) {
-        if (!msort(freqs, nitems - i, sizeof(HuffNode_t), cmp_tree))
-            goto fail;
         HuffNode_t * left = freqs;
         HuffNode_t * right = freqs + 1;
         tree[i * 2] = *right;
@@ -216,12 +252,16 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
         endptr->branch.left = tree + i * 2;
         endptr->branch.right = tree + i * 2 + 1;
         endptr--;
+        if (i == nitems - 2)
+            break;
+        if (!msort(freqs, nitems - i - 1, sizeof(HuffNode_t), cmp_tree))
+            goto fail;
     }
 
     int treeSize = 0;
     create_bit_encoding(&freqs->branch, encoding, 0, 0);
-    treeSize = write_tree(dest, freqs, 5);
-    treeSize *= 2;
+    treeSize = nitems * 2;
+    write_tree(dest, freqs, nitems);
     free(tree);
     free(freqs);
 
@@ -249,7 +289,6 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
     dest[1] = srcSize;
     dest[2] = srcSize >> 8;
     dest[3] = srcSize >> 16;
-    dest[4] = treeSize / 2;
     *compressedSize_p = (destPos + 3) & ~3;
     return dest;
 

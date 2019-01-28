@@ -4,7 +4,8 @@
 union HuffNode;
 
 struct HuffData {
-    unsigned value:31;
+    unsigned value:30;
+    unsigned isRightFork:1;
     unsigned isLeaf:1;
 };
 
