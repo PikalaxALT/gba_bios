@@ -920,7 +920,7 @@ _00000872:
 sub_00000874: @ 0x00000874
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x14
-	ldr r1, _00000AF0 @=gUnknown_30C0
+	ldr r1, _00000AF0 @=gUnknown_30C0 @ 512, 2, 8, 0
 	ldm r1!, {r5, r7}
 	add r0, sp, #8
 	stm r0!, {r5, r7}
@@ -6042,12 +6042,17 @@ gUnknown_30B0:
 
 	.global gUnknown_30C0
 gUnknown_30C0:
-	@ a struct of some sort?
-	.byte 0x00, 0x02, 0x02, 0x08, 0x00, 0x00, 0x00, 0x00
+	.2byte 0x0200 @ size
+	.byte 2 @ source bit depth
+	.byte 8 @ target bit depth
+	.4byte 0 @ fill value
 
 	.global gUnknown_30C8
 gUnknown_30C8:
-	.byte 0xC0, 0x01, 0x01, 0x08, 0x1E, 0x00, 0x00, 0x00
+	.2byte 0x01C0 @ size
+	.byte 1 @ source bit depth
+	.byte 8 @ target bit depth
+	.4byte 0x1E @ fill value
 
 	.global gUnknown_30D0
 gUnknown_30D0:

@@ -89,11 +89,9 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
         fputc('\t', stderr);
     }
     if (left->header.isLeaf) {
-        fprintf(stderr, "LEFT LEAF %d\n", left->leaf.key);
         encoding[left->leaf.key].nbits = depth;
         encoding[left->leaf.key].bitstring = curLeftEncoding;
     } else {
-        fprintf(stderr, "LEFT BRANCH\n");
         create_bit_encoding(&left->branch, encoding, curLeftEncoding, depth);
     }
 
@@ -101,11 +99,9 @@ void create_bit_encoding(struct HuffBranch * tree, struct BitEncoding * encoding
         fputc('\t', stderr);
     }
     if (right->header.isLeaf) {
-        fprintf(stderr, "RIGHT LEAF %d\n", right->leaf.key);
         encoding[right->leaf.key].nbits = depth;
         encoding[right->leaf.key].bitstring = curRightEncoding;
     } else {
-        fprintf(stderr, "RIGHT BRANCH\n");
         create_bit_encoding(&right->branch, encoding, curRightEncoding, depth);
     }
 }
@@ -125,17 +121,13 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
             HuffNode_t * currNode = traversal;
             HuffNode_t * parent = NULL;
             for (k = 0; k < depth; k++) {
-                fprintf(stderr, "i = %d, depth = %d, j = %d, k = %d\n", i, depth, j, k);
-                if (currNode->header.isLeaf) {
-                    fprintf(stderr, "isLeaf depth %d\n", k);
+                if (currNode->header.isLeaf)
                     break;
-                }
                 parent = currNode;
                 if ((j >> (depth - k - 1)) & 1)
                     currNode = currNode->branch.right;
                 else
                     currNode = currNode->branch.left;
-//                fprintf(stderr, "%d\n", (j >> (depth - k - 1)) & 1);
             }
             if (k == depth) {
                 if (!currNode->header.isLeaf)
@@ -156,7 +148,6 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
                     traversal[i].header.value = -1u;
                 }
                 i++;
-                fprintf(stderr, "%d --> %d\n", right_i, i);
             }
         }
     }
@@ -172,7 +163,6 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
             dest[5 + i] = traversal[i].leaf.key;
         } else {
             int right_i = traversal[i].branch.right - traversal;
-            fprintf(stderr, "%d\t%d\n", i, right_i);
             dest[5 + i] = (((right_i - i) / 2) - 1) & 0x3F;
             dest[5 + i] |= (0x80 * traversal[i].branch.left->header.isLeaf);
             dest[5 + i] |= (0x40 * traversal[i].branch.right->header.isLeaf);
@@ -314,36 +304,6 @@ fail:
     FATAL_ERROR("Fatal error while decompressing Huff file.\n");
 }
 
-static void read_huff_tree(unsigned char * tree, int offset, int depth) {
-    static int skip = 1;
-    depth++;
-    int next = (offset & ~1) + ((tree[offset] & 0x3F) + 1) * 2;
-    fprintf(stderr, "%d --> %d (%d)\n", offset, next, skip);
-    skip++;
-
-    for (int i = 0; i < depth - 1; i++) {
-        fputc('\t', stderr);
-    }
-
-    if (tree[offset] & 0x80) {
-        fprintf(stderr, "LEFT LEAF %d\n", tree[next]);
-    } else {
-        fprintf(stderr, "LEFT BRANCH\n");
-        read_huff_tree(tree, next, depth);
-    }
-
-    for (int i = 0; i < depth - 1; i++) {
-        fputc('\t', stderr);
-    }
-
-    if (tree[offset] & 0x40) {
-        fprintf(stderr, "RIGHT LEAF %d\n", tree[next + 1]);
-    } else {
-        fprintf(stderr, "RIGHT BRANCH\n");
-        read_huff_tree(tree, next + 1, depth);
-    }
-}
-
 unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompressedSize_p) {
     if (srcSize < 4)
         goto fail;
@@ -360,7 +320,6 @@ unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompres
         goto fail;
 
     int treePos = 5;
-    read_huff_tree(src, 5, 0);
     int treeSize = (src[4] + 1) * 2;
     int srcPos = 4 + treeSize;
     int destPos = 0;
