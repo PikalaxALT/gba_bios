@@ -55,8 +55,6 @@ $(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 # Build GBA ROM
 %.bin: %.elf
 	$(OBJCOPY) -S -O binary --gap-fill 0x00 --pad-to 0x4000 $< $@
-	@# Why the fuck is objcopy adding this garbage to the end of my file? plz fix
-	truncate -s $(shell echo $$((0x4000))) $(ROM)
 
 # C source code
 src/%.o: src/%.c
