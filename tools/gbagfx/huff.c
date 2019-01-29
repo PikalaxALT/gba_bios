@@ -141,7 +141,7 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems) {
                     else
                         parent->branch.left = traversal + i;
                 } else {
-                    traversal[i].header.value = -1u;
+                    traversal[i].header.value = 0x3FFFFFFF;
                 }
                 i++;
             }
