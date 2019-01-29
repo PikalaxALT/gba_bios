@@ -4,22 +4,16 @@ gUnknown_0300000C = .;
 	. += 0x58;
 
 gUnknown_03000064 = .;
-	. += 0x24;
+	. += 0x500;
 
-gUnknown_03000088 = .;
-	. += 0x4DC;
+gGameboyLogoBuffer = .;
+	. += 0x1000;
 
-gUnknown_03000564 = .;
-	. += 0x24;
-
-gUnknown_03000588 = .;
-	. += 0xFDC;
-
-gUnknown_03001564 = .;
+gGameboyLogoBuffer2 = .;
 	. += 0x2000;
 
 gUnknown_03003564 = .;
-	. += 0x1C;
+	. += 0x1C; // int[7]
 
 gUnknown_03003580 = .;
 	. += 0x70;
@@ -39,7 +33,7 @@ gUnknown_0300390C = .;
 gUnknown_0300394C = .;
 	. += 0x1E0;
 
-gUnknown_03003B2C = .;
+gSoundDriver = .;
 	. += 0x4494;
 
 gUnknown_03007FC0 = .;

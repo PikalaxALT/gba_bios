@@ -658,7 +658,7 @@ sub_000006CE: @ 0x000006CE
 	lsls r3, r3, #0x18
 	adds r0, r3, #4
 	adds r0, r0, r4
-	ldr r1, _00000AC0 @=gUnknown_03000088
+	ldr r1, _00000AC0 @=gUnknown_03000064 + 0x24
 	adds r1, r1, r4
 	movs r2, #0xa
 	bl swi_CPUSet
@@ -865,7 +865,7 @@ _0000082C:
 
 	UNALIGNED_THUMB_FUNC_START sub_0000082E
 sub_0000082E: @ 0x0000082E
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	@ movs r2, #0x370
 	movs r2, #0x37
 	lsls r2, r2, #4
@@ -874,7 +874,7 @@ sub_0000082E: @ 0x0000082E
 
 	THUMB_FUNC_START sub_00000838
 sub_00000838: @ 0x00000838
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	movs r2, #0x24
 	ldr r0, _00000AE0 @=gUnknown_326C
 	b safecopy32
@@ -931,11 +931,11 @@ sub_00000874: @ 0x00000874
 	bne _0000088C
 	ldr r0, _00000AFC @=0x0BFFFFE0
 _0000088C:
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	movs r2, #0xa
 	bl swi_CPUSet
 	bl sub_000005A4
-	ldr r1, _00000AC0 @=gUnknown_03000088
+	ldr r1, _00000AC0 @=gUnknown_03000064 + 0x24
 	adds r3, r1, #0
 	adds r3, #0xae
 	ldrb r0, [r3]
@@ -948,17 +948,17 @@ _0000088C:
 	bl swi_CPUSet
 _000008B0:
 	bl sub_0000082E
-	ldr r0, _00000AD8 @=gUnknown_03000564
-	ldr r1, _00000B04 @=gUnknown_03001564
+	ldr r0, _00000AD8 @=gGameboyLogoBuffer
+	ldr r1, _00000B04 @=gGameboyLogoBuffer2
 	bl swi_HuffUnComp_t
-	ldr r0, _00000B04 @=gUnknown_03001564
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r0, _00000B04 @=gGameboyLogoBuffer2
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	bl swi_LZ77UnCompWRAM_t
 	movs r7, #0
 _000008C6:
 	lsls r0, r7, #2
 	str r0, [sp, #0xc]
-	ldr r2, _00000AD8 @=gUnknown_03000564
+	ldr r2, _00000AD8 @=gGameboyLogoBuffer
 	lsls r0, r7, #8
 	adds r0, r0, r2
 	ldr r3, _00000B08 @=VRAM + 0x00040
@@ -991,7 +991,7 @@ _000008E6:
 	bge _000008E6
 	.2byte 0x1EBF @ subs r7, r7, #2
 	bge _000008E4
-	ldr r0, _00000AC0 @=gUnknown_03000088
+	ldr r0, _00000AC0 @=gUnknown_03000064 + 0x24
 	bl sub_0000094A
 	bl sub_00000974
 	bl sub_00000982
@@ -1023,24 +1023,24 @@ sub_0000094A: @ 0x0000094A
 	strb r0, [r4]
 	bl sub_00000838
 	ldr r0, [sp]
-	ldr r1, _00000B24 @=gUnknown_03000588
+	ldr r1, _00000B24 @=gGameboyLogoBuffer + 0x24
 	movs r2, #0x4e
 	bl swi_CPUSet
-	ldr r0, _00000AD8 @=gUnknown_03000564
-	ldr r1, _00000B04 @=gUnknown_03001564
+	ldr r0, _00000AD8 @=gGameboyLogoBuffer
+	ldr r1, _00000B04 @=gGameboyLogoBuffer2
 	bl swi_HuffUnComp_t
-	ldr r0, _00000B04 @=gUnknown_03001564
+	ldr r0, _00000B04 @=gGameboyLogoBuffer2
 	ldr r2, _00000B28 @=0x0000D082
 	str r2, [r0]
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	bl swi_Diff16bitUnFilter
 	pop {r0, r4, r5, r6, r7, pc}
 
 	THUMB_FUNC_START sub_00000974
 sub_00000974: @ 0x00000974
 	push {r0, r4, r5, r6, r7, lr}
-	ldr r0, _00000AD8 @=gUnknown_03000564
-	ldr r1, _00000B04 @=gUnknown_03001564
+	ldr r0, _00000AD8 @=gGameboyLogoBuffer
+	ldr r1, _00000B04 @=gGameboyLogoBuffer2
 	ldr r2, _00000B2C @=gUnknown_30C8
 	bl swi_BitUnPack_t
 	pop {r0, r4, r5, r6, r7, pc}
@@ -1048,7 +1048,7 @@ sub_00000974: @ 0x00000974
 	UNALIGNED_THUMB_FUNC_START sub_00000982
 sub_00000982: @ 0x00000982
 	push {r0, r4, r5, r6, r7, lr}
-	ldr r6, _00000B04 @=gUnknown_03001564
+	ldr r6, _00000B04 @=gGameboyLogoBuffer2
 	ldr r4, _00000B30 @=VRAM + 0x024C0
 	movs r7, #2
 _0000098A:
@@ -1075,7 +1075,7 @@ _0000099C:
 	bgt _0000099C
 	mov r0, sp
 	str r7, [r0]
-	ldr r1, _00000AD8 @=gUnknown_03000564
+	ldr r1, _00000AD8 @=gGameboyLogoBuffer
 	movs r2, #8
 	lsls r2, r2, #8
 	bl _00000AB2
@@ -1202,13 +1202,13 @@ _00000AB2:
 	.align 2, 0
 _00000AB8: .4byte sub_00002D70
 _00000ABC: .4byte swi_SoundDriverVSync
-_00000AC0: .4byte gUnknown_03000088
+_00000AC0: .4byte gUnknown_03000064 + 0x24
 _00000AC4: .4byte gNintendoLogo
 _00000AC8: .4byte gUnknown_03003580
 _00000ACC: .4byte gUnknown_3200
 _00000AD0: .4byte PLTT + 0x0200
 _00000AD4: .4byte REG_SOUNDBIAS
-_00000AD8: .4byte gUnknown_03000564
+_00000AD8: .4byte gGameboyLogoBuffer
 _00000ADC: .4byte gUnknown_332C
 _00000AE0: .4byte gUnknown_326C
 _00000AE4: .4byte gUnknown_369C
@@ -1219,7 +1219,7 @@ _00000AF4: .4byte 0x0BFE1FE0
 _00000AF8: .4byte ROM_HEADER_DEVICE
 _00000AFC: .4byte 0x0BFFFFE0
 _00000B00: .4byte 0x85000027
-_00000B04: .4byte gUnknown_03001564
+_00000B04: .4byte gGameboyLogoBuffer2
 _00000B08: .4byte VRAM + 0x00040
 _00000B0C: .4byte gUnknown_30B0
 _00000B10: .4byte VRAM + 0x10000
@@ -1227,7 +1227,7 @@ _00000B14: .4byte VRAM + 0x0B880
 _00000B18: .4byte 0x00000202
 _00000B1C: .4byte 0x00007271
 _00000B20: .4byte gUnknown_03007FF0 + 7
-_00000B24: .4byte gUnknown_03000588
+_00000B24: .4byte gGameboyLogoBuffer + 0x24
 _00000B28: .4byte 0x0000D082
 _00000B2C: .4byte gUnknown_30C8
 _00000B30: .4byte VRAM + 0x024C0
@@ -2891,7 +2891,7 @@ _00001962:
 	str r0, [r1, #0x10]
 	bl sub_00000726
 	bl sub_00002D68
-	ldr r0, _00001D3C @=gUnknown_03003B2C
+	ldr r0, _00001D3C @=gSoundDriver
 	bl swi_SoundDriverInit
 	ldr r0, _00001D40 @=0x00940A00
 	bl swi_SoundDriverMode
@@ -3265,7 +3265,7 @@ _00001C62:
 	bgt _00001C6A
 	b _000019B4
 _00001C6A:
-	ldr r0, _00001D94 @=gUnknown_03000088
+	ldr r0, _00001D94 @=gUnknown_03000064 + 0x24
 	bl ValidateROMHeader
 	movs r6, #0
 	adds r7, r0, #0
@@ -3368,7 +3368,7 @@ _00001D2C: .4byte 0x04000300
 _00001D30: .4byte REG_IE
 _00001D34: .4byte 0x10003F5F
 _00001D38: .4byte REG_WIN0H
-_00001D3C: .4byte gUnknown_03003B2C
+_00001D3C: .4byte gSoundDriver
 _00001D40: .4byte 0x00940A00
 _00001D44: .4byte gUnknown_0300372C
 _00001D48: .4byte gUnknown_030036EC
@@ -3390,7 +3390,7 @@ _00001D84: .4byte gUnknown_39C0
 _00001D88: .4byte gUnknown_03000064
 _00001D8C: .4byte REG_KEYINPUT
 _00001D90: .4byte gUnknown_389C
-_00001D94: .4byte gUnknown_03000088
+_00001D94: .4byte gUnknown_03000064 + 0x24
 _00001D98: .4byte 0x03FFFFF0
 _00001D9C: .4byte gUnknown_3818
 _00001DA0: .4byte 0x00103FBF
@@ -6045,14 +6045,14 @@ gUnknown_30C0:
 	.2byte 0x0200 @ size
 	.byte 2 @ source bit depth
 	.byte 8 @ target bit depth
-	.4byte 0 @ fill value
+	.4byte 0 @ offset value
 
 	.global gUnknown_30C8
 gUnknown_30C8:
 	.2byte 0x01C0 @ size
 	.byte 1 @ source bit depth
 	.byte 8 @ target bit depth
-	.4byte 0x1E @ fill value
+	.4byte 0x1E @ offset value
 
 	.global gUnknown_30D0
 gUnknown_30D0:
