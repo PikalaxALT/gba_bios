@@ -28,8 +28,8 @@ union HuffNode {
 typedef union HuffNode HuffNode_t;
 
 struct BitEncoding {
-    unsigned nbits:8;
-    unsigned bitstring:24;
+    unsigned long long nbits:6;
+    unsigned long long bitstring:58;
 };
 
 unsigned char * HuffCompress(unsigned char * buffer, int srcSize, int * compressedSize_p, int bitDepth);
