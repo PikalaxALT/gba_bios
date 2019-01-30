@@ -13,7 +13,7 @@ gGameboyLogoBuffer2 = .;
 	. += 0x2000;
 
 gUnknown_03003564 = .;
-	. += 0x1C; @ int[7]
+	. += 0x1C; /* int[7] */
 
 gUnknown_03003580 = .;
 	. += 0x70;
