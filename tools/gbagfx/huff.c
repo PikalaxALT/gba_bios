@@ -167,7 +167,7 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems, stru
     free(traversal);
 }
 
-static inline void dump_bits(unsigned char * dest, int * destPos, uint32_t * buff, int * buffPos) {
+static inline void write_32_le(unsigned char * dest, int * destPos, uint32_t * buff, int * buffPos) {
     dest[*destPos] = *buff;
     dest[*destPos + 1] = *buff >> 8;
     dest[*destPos + 2] = *buff >> 16;
@@ -175,6 +175,15 @@ static inline void dump_bits(unsigned char * dest, int * destPos, uint32_t * buf
     *destPos += 4;
     *buff = 0;
     *buffPos = 0;
+}
+
+static inline void read_32_le(unsigned char * src, int * srcPos, uint32_t * buff) {
+    uint32_t tmp = src[*srcPos];
+    tmp |= src[*srcPos + 1] << 8;
+    tmp |= src[*srcPos + 2] << 16;
+    tmp |= src[*srcPos + 3] << 24;
+    *srcPos += 4;
+    *buff = tmp;
 }
 
 static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding * encoding, int value, uint32_t * buff, int * buffBits) {
@@ -187,7 +196,7 @@ static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding *
         *buff |= bitstring >> diff;
         bitstring &= ~(1 << diff);
         nbits = diff;
-        dump_bits(dest, destPos, buff, buffBits);
+        write_32_le(dest, destPos, buff, buffBits);
     }
     if (nbits != 0) {
         *buff <<= nbits;
@@ -291,20 +300,19 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
     // Encode the data itself.
     int destPos = 4 + nitems * 2;
     uint32_t destBuf = 0;
+    uint32_t srcBuf = 0;
     int destBitPos = 0;
 
-    for (int srcPos = 0; srcPos < srcSize; srcPos++) {
-        if (bitDepth == 8) {
-            write_bits(dest, &destPos, encoding, src[srcPos], &destBuf, &destBitPos);
-        }
-        else {
-            write_bits(dest, &destPos, encoding, src[srcPos] & 0xF, &destBuf, &destBitPos);
-            write_bits(dest, &destPos, encoding, src[srcPos] >> 4, &destBuf, &destBitPos);
+    for (int srcPos = 0; srcPos < srcSize;) {
+        read_32_le(src, &srcPos, &srcBuf);
+        for (int i = 0; i < 32 / bitDepth; i++) {
+            write_bits(dest, &destPos, encoding, srcBuf & (0xFF >> (8 - bitDepth)), &destBuf, &destBitPos);
+            srcBuf >>= bitDepth;
         }
     }
 
     if (destBitPos != 0) {
-        dump_bits(dest, &destPos, &destBuf, &destBitPos);
+        write_32_le(dest, &destPos, &destBuf, &destBitPos);
     }
 
     free(encoding);
@@ -342,13 +350,13 @@ unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompres
     int destPos = 0;
     int curValPos = 0;
     uint32_t destTmp = 0;
+    uint32_t window;
 
     for (;;)
     {
         if (srcPos >= srcSize)
             goto fail;
-        uint32_t window = src[srcPos] | (src[srcPos + 1] << 8) | (src[srcPos + 2] << 16) | (src[srcPos + 3] << 24);
-        srcPos += 4;
+        read_32_le(src, &srcPos, &window);
         for (int i = 0; i < 32; i++) {
             int curBit = (window >> 31) & 1;
             unsigned char treeView = src[treePos];
@@ -360,7 +368,7 @@ unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompres
                 destTmp |= (src[treePos] << (32 - bitDepth));
                 curValPos++;
                 if (curValPos == 32 / bitDepth) {
-                    dump_bits(dest, &destPos, &destTmp, &curValPos);
+                    write_32_le(dest, &destPos, &destTmp, &curValPos);
                     if (destPos == destSize) {
                         *uncompressedSize_p = destSize;
                         return dest;
