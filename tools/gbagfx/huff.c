@@ -167,13 +167,14 @@ static void write_tree(unsigned char * dest, HuffNode_t * tree, int nitems, stru
     free(traversal);
 }
 
-static inline void dump_bits(unsigned char * dest, int * destPos, uint32_t * buff) {
+static inline void dump_bits(unsigned char * dest, int * destPos, uint32_t * buff, int * buffPos) {
     dest[*destPos] = *buff;
     dest[*destPos + 1] = *buff >> 8;
     dest[*destPos + 2] = *buff >> 16;
     dest[*destPos + 3] = *buff >> 24;
-    *buff = 0;
     *destPos += 4;
+    *buff = 0;
+    *buffPos = 0;
 }
 
 static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding * encoding, int value, uint32_t * buff, int * buffBits) {
@@ -186,8 +187,7 @@ static void write_bits(unsigned char * dest, int * destPos, struct BitEncoding *
         *buff |= bitstring >> diff;
         bitstring &= ~(1 << diff);
         nbits = diff;
-        dump_bits(dest, destPos, buff);
-        *buffBits = 0;
+        dump_bits(dest, destPos, buff, buffBits);
     }
     if (nbits != 0) {
         *buff <<= nbits;
@@ -304,7 +304,7 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
     }
 
     if (destBitPos != 0) {
-        dump_bits(dest, &destPos, &destBuf);
+        dump_bits(dest, &destPos, &destBuf, &destBitPos);
     }
 
     free(encoding);
@@ -360,17 +360,11 @@ unsigned char * HuffDecompress(unsigned char * src, int srcSize, int * uncompres
                 destTmp |= (src[treePos] << (32 - bitDepth));
                 curValPos++;
                 if (curValPos == 32 / bitDepth) {
-                    dest[destPos] = destTmp;
-                    dest[destPos + 1] = destTmp >> 8;
-                    dest[destPos + 2] = destTmp >> 16;
-                    dest[destPos + 3] = destTmp >> 24;
-                    destPos += 4;
+                    dump_bits(dest, &destPos, &destTmp, &curValPos);
                     if (destPos == destSize) {
                         *uncompressedSize_p = destSize;
                         return dest;
                     }
-                    destTmp = 0;
-                    curValPos = 0;
                 }
                 treePos = 5;
             }
