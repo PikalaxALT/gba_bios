@@ -248,6 +248,12 @@ unsigned char * HuffCompress(unsigned char * src, int srcSize, int * compressedS
         }
     }
 
+#ifdef DEBUG
+    for (int i = 0; i < nitems; i++) {
+        fprintf(stderr, "%d: %d\n", i, freqs[i].header.value);
+    }
+#endif // DEBUG
+
     // Sort the frequency table.
     if (!msort(freqs, nitems, sizeof(HuffNode_t), cmp_tree))
         goto fail;
