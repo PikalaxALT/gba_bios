@@ -10,7 +10,7 @@ OBJCOPY  := $(DEVKITARM)/bin/arm-none-eabi-objcopy
 
 CC1FLAGS := -g -mthumb-interwork -Wimplicit -Wparentheses -O2 -fhex-asm
 CPPFLAGS := -Itools/agbcc/include -iquote include -nostdinc -undef
-ASFLAGS  := -mcpu=arm7tdmi -mthumb-interwork -Iasminclude
+ASFLAGS  := -mcpu=arm7tdmi -march=armv4t -mthumb-interwork -Iasminclude
 
 
 #### Files ####
@@ -21,6 +21,16 @@ MAP      := $(ROM:.bin=.map)
 LDSCRIPT := ldscript.txt
 SOURCES  := asm/bios.s
 OFILES   := $(addsuffix .o, $(basename $(SOURCES)))
+LD_DEPS  := sym_ewram.txt sym_iwram.txt
+
+# Secondary expansion is required for dependency variables in object rules.
+.SECONDEXPANSION:
+# Clear the default suffixes
+.SUFFIXES:
+# Don't delete intermediate files
+.SECONDARY:
+# Delete files that weren't built properly
+.DELETE_ON_ERROR:
 
 #### Main Targets ####
 
@@ -39,21 +49,21 @@ clean:
 .PRECIOUS: %.4bpp
 
 # Link ELF file
-$(ELF): $(OFILES) $(LDSCRIPT)
+$(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 	$(LD) -T $(LDSCRIPT) -Map $(MAP) $(OFILES) -o $@
 
 # Build GBA ROM
 %.bin: %.elf
-	$(OBJCOPY) -S -O binary $< $@
+	$(OBJCOPY) -S -O binary --gap-fill 0x00 --pad-to 0x4000 $< $@
 
 # C source code
-%.o: %.c
-	$(CPP) $(CPPFLAGS) $< | $(CC1) $(CC1FLAGS) -o $*.s
-	echo '.ALIGN 2, 0' >> $*.s
-	$(AS) $(ASFLAGS) $*.s -o $*.o
+src/%.o: src/%.c
+	$(CPP) $(CPPFLAGS) $< | $(CC1) $(CC1FLAGS) -o src/$*.s
+	$(AS) $(ASFLAGS) $*.s -o $@
 
 # Assembly source code
-%.o: %.s
+asm/%.o: ASM_DEPS = $(shell tools/scaninc/scaninc asm/$*.s)
+asm/%.o: asm/%.s $$(ASM_DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
 
 # Graphics files
@@ -63,5 +73,9 @@ $(ELF): $(OFILES) $(LDSCRIPT)
 	$(GBAGFX) $< $@
 %.lz: %
 	$(GBAGFX) $< $@
+%.huff: %
+	$(GBAGFX) $< $@
+
+%.inc: ;
 
 include gfxdep.mk

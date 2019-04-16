@@ -6,9 +6,15 @@ SECTIONS
 	ALIGN(4)
 	{
 		asm/bios.o(.text);
+		asm/bios.o(.glue_7t);
 	} = 0
 
-/*
+	.rodata :
+	ALIGN(4)
+	{
+		asm/bios.o(.rodata);
+	} = 0
+
 	. = 0x02000000;
 	.ewram_data :
 	ALIGN(4)
@@ -22,7 +28,17 @@ SECTIONS
 	{
 		INCLUDE "sym_iwram.txt"
 	} = 0
-*/
+
+    /* DWARF 2 sections */
+    .debug_aranges  0 : { *(.debug_aranges) }
+    .debug_pubnames 0 : { *(.debug_pubnames) }
+    .debug_info     0 : { *(.debug_info) }
+    .debug_abbrev   0 : { *(.debug_abbrev) }
+    .debug_line     0 : { *(.debug_line) }
+    .debug_frame    0 : { *(.debug_frame) }
+    .debug_str      0 : { *(.debug_str) }
+    .debug_loc      0 : { *(.debug_loc) }
+    .debug_macinfo  0 : { *(.debug_macinfo) }
 
     /* Discard everything not specifically mentioned above. */
     /DISCARD/ :

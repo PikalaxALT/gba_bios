@@ -1,0 +1,43 @@
+	. += 0xC;
+
+gUnknown_0300000C = .;
+	. += 0x58;
+
+gUnknown_03000064 = .;
+	. += 0x500;
+
+gGameboyLogoBuffer = .;
+	. += 0x1000;
+
+gGameboyLogoBuffer2 = .;
+	. += 0x2000;
+
+gUnknown_03003564 = .;
+	. += 0x1C; /* int[7] */
+
+gUnknown_03003580 = .;
+	. += 0x70;
+
+gUnknown_030035F0 = .;
+	. += 0xFC;
+
+gUnknown_030036EC = .;
+	. += 0x40;
+
+gUnknown_0300372C = .;
+	. += 0x1E0;
+
+gUnknown_0300390C = .;
+	. += 0x40;
+
+gUnknown_0300394C = .;
+	. += 0x1E0;
+
+gSoundDriver = .;
+	. += 0x4494;
+
+gUnknown_03007FC0 = .;
+	. += 0x30;
+
+gUnknown_03007FF0 = .;
+	. += 0x10;
