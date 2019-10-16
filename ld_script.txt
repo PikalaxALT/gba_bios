@@ -6,6 +6,8 @@ SECTIONS
 	ALIGN(4)
 	{
 		asm/bios.o(.text);
+		asm/m4a_1.o(.text);
+		asm/bios.o(.text.after_m4a);
 		asm/bios.o(.glue_7t);
 	} = 0
 

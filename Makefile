@@ -1,25 +1,20 @@
 #### Tools ####
 
 GBAGFX   := tools/gbagfx/gbagfx
-CC1      := tools/agbcc/bin/agbcc
-CC1_OLD  := tools/agbcc/bin/old_agbcc
 CPP      := $(DEVKITARM)/bin/arm-none-eabi-cpp
 AS       := $(DEVKITARM)/bin/arm-none-eabi-as
 LD       := $(DEVKITARM)/bin/arm-none-eabi-ld
 OBJCOPY  := $(DEVKITARM)/bin/arm-none-eabi-objcopy
 
-CC1FLAGS := -g -mthumb-interwork -Wimplicit -Wparentheses -O2 -fhex-asm
-CPPFLAGS := -Itools/agbcc/include -iquote include -nostdinc -undef
-ASFLAGS  := -mcpu=arm7tdmi -march=armv4t -mthumb-interwork -Iasminclude
-
+ASFLAGS  := -mcpu=arm7tdmi
 
 #### Files ####
 
 ROM      := gba_bios.bin
 ELF      := $(ROM:.bin=.elf)
 MAP      := $(ROM:.bin=.map)
-LDSCRIPT := ldscript.txt
-SOURCES  := asm/bios.s
+LDSCRIPT := ld_script.txt
+SOURCES  := $(wildcard asm/*.s)
 OFILES   := $(addsuffix .o, $(basename $(SOURCES)))
 LD_DEPS  := sym_ewram.txt sym_iwram.txt
 
@@ -38,7 +33,7 @@ compare: $(ROM)
 	md5sum -c checksum.md5
 
 clean:
-	$(RM) $(ROM) $(ELF) $(MAP) $(OFILES) src/*.s
+	$(RM) $(ROM) $(ELF) $(MAP) $(OFILES)
 
 #### Recipes ####
 
@@ -55,11 +50,6 @@ $(ELF): $(OFILES) $(LDSCRIPT) $(LD_DEPS)
 # Build GBA ROM
 %.bin: %.elf
 	$(OBJCOPY) -S -O binary --gap-fill 0x00 --pad-to 0x4000 $< $@
-
-# C source code
-src/%.o: src/%.c
-	$(CPP) $(CPPFLAGS) $< | $(CC1) $(CC1FLAGS) -o src/$*.s
-	$(AS) $(ASFLAGS) $*.s -o $@
 
 # Assembly source code
 asm/%.o: ASM_DEPS = $(shell tools/scaninc/scaninc asm/$*.s)
