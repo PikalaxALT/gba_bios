@@ -95,10 +95,10 @@ swi_HardReset: @ 0x0000008C
 
 	ARM_FUNC_START swi_SoftReset
 swi_SoftReset: @ 0x000000B4
-	mov r4, #REG_BASE
+	mov r4, #0x04000000
 	ldrb r2, [r4, #-6]
 	bl sub_00E0
-	cmp r2, #0
+	cmp r2, #0 @ Test whether we are in a multiboot state
 	ldmdb r4, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12}
 	movne lr, #EWRAM
 	moveq lr, #ROM
