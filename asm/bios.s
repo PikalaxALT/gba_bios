@@ -60,7 +60,7 @@ reserved_vector:
 	bne _0054
 	ldrbeq lr, [r12, #0xb4]
 	andseq lr, lr, #0x80
-	add lr, pc, #_0054 - . - 8
+	adr lr, _0054
 	ldrne pc, _0274 @=0x09FE2000
 	ldreq pc, _0278 @=0x09FFC000
 _0054:
@@ -90,7 +90,7 @@ swi_HardReset: @ 0x0000008C
 	adr r0, sub_0300
 	str r0, [sp, #0xfc]
 	ldr r0, _027C @=sub_1928
-	add lr, pc, #0
+	adr lr, swi_SoftReset
 	bx r0
 
 	ARM_FUNC_START swi_SoftReset
@@ -140,7 +140,7 @@ _0120:
 irq_vector:
 	push {r0, r1, r2, r3, r12, lr}
 	mov r0, #REG_BASE
-	add lr, pc, #irq_complete - . - 8
+	adr lr, irq_complete
 	ldr pc, [r0, #-4]
 irq_complete:
 	pop {r0, r1, r2, r3, r12, lr}
@@ -158,7 +158,7 @@ swi_vector:
 	orr r11, r11, #0x1f
 	msr cpsr_fc, r11
 	push {r2, lr}
-	add lr, pc, #swi_complete - . - 8
+	adr lr, swi_complete
 	bx r12
 swi_complete: @ 0x00000170
 	pop {r2, lr}
