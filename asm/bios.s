@@ -169,12 +169,12 @@ swi_complete: @ 0x00000170
 	pop {r11, r12, lr}
 	movs pc, lr
 
-	ARM_FUNC_START Dispcnt_Something_And_Custom_Halt
-Dispcnt_Something_And_Custom_Halt:
+	ARM_FUNC_START SwitchToCGBMode
+SwitchToCGBMode:
 	mov r12, #REG_DISPCNT
-	mov r2, #4
+	mov r2, #DISPCNT_BG2_ON >> 8
 	strb r2, [r12, #1]
-	mov r2, #8
+	mov r2, #DISPCNT_CGB_MODE
 	strb r2, [r12]
 swi_Halt:
 	mov r2, #0
@@ -296,7 +296,7 @@ _02C6:
 	str r6, [r4, #4]
 	ldr r1, _02F0 @=0x85006000
 	str r1, [r4, #8]
-	bl Dispcnt_Something_And_Custom_Halt_t
+	bl SwitchToCGBMode_t
 	.align 2, 0
 _02F0: .4byte 0x85006000
 _02F4: .4byte 0xFFFFD800
@@ -4728,7 +4728,7 @@ gUnknown_36EC:
 	.byte  0,  0
 
 	THUMB_INTERWORK_VENEER swi_Halt
-	THUMB_INTERWORK_VENEER Dispcnt_Something_And_Custom_Halt
+	THUMB_INTERWORK_VENEER SwitchToCGBMode
 	THUMB_INTERWORK_VENEER swi_DivArm
 	THUMB_INTERWORK_VENEER swi_VBlankIntrWait
 	THUMB_INTERWORK_VENEER swi_ObjAffineSet

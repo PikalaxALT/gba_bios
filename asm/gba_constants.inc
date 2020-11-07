@@ -453,6 +453,27 @@ REG_WAITCNT      = (REG_BASE + REG_OFFSET_WAITCNT)
 @ I/O Register Flags
 @-------------------------------------------------------------------------------
 
+@ DISPCNT
+DISPCNT_MODE_0          = 0x0000 @ BG0: text, BG1: text, BG2: text,   BG3: text
+DISPCNT_MODE_1          = 0x0001 @ BG0: text, BG1: text, BG2: affine, BG3: off
+DISPCNT_MODE_2          = 0x0002 @ BG0: off,  BG1: off,  BG2: affine, BG3: affine
+DISPCNT_MODE_3          = 0x0003 @ Bitmap mode, 240x160, BGR555 color
+DISPCNT_MODE_4          = 0x0004 @ Bitmap mode, 240x160, 256 color palette
+DISPCNT_MODE_5          = 0x0005 @ Bitmap mode, 160x128, BGR555 color
+DISPCNT_CGB_MODE        = 0x0008 @ Enable CGB mode
+DISPCNT_HBLANK_INTERVAL = 0x0020 @ Allow access to OAM during H-Blank
+DISPCNT_OBJ_1D_MAP      = 0x0040
+DISPCNT_FORCED_BLANK    = 0x0080
+DISPCNT_BG0_ON          = 0x0100
+DISPCNT_BG1_ON          = 0x0200
+DISPCNT_BG2_ON          = 0x0400
+DISPCNT_BG3_ON          = 0x0800
+DISPCNT_BG_ALL_ON       = 0x0F00
+DISPCNT_OBJ_ON          = 0x1000
+DISPCNT_WIN0_ON         = 0x2000
+DISPCNT_WIN1_ON         = 0x4000
+DISPCNT_OBJWIN_ON       = 0x8000
+
 @ DMA
 DMA_DEST_INC      = 0x0000
 DMA_DEST_DEC      = 0x0020
