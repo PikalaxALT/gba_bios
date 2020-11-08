@@ -257,6 +257,8 @@ REG_OFFSET_IF           = 0x202
 
 REG_OFFSET_WAITCNT      = 0x204
 
+REG_OFFSET_POSTFLG      = 0x300
+REG_OFFSET_HALTCNT      = 0x301
 
 @-------------------------------------------------------------------------------
 @ I/O Register Addresses
@@ -448,6 +450,9 @@ REG_IE           = (REG_BASE + REG_OFFSET_IE)
 REG_IF           = (REG_BASE + REG_OFFSET_IF)
 
 REG_WAITCNT      = (REG_BASE + REG_OFFSET_WAITCNT)
+
+REG_POSTFLG      = (REG_BASE + REG_OFFSET_POSTFLG)
+REG_HALTCNT      = (REG_BASE + REG_OFFSET_HALTCNT)
 
 @-------------------------------------------------------------------------------
 @ I/O Register Flags

@@ -86,10 +86,10 @@ swi_HardReset: @ 0x0000008C
 	msr cpsr_fc, r0
 	mov r4, #REG_BASE
 	strb r4, [r4, #REG_OFFSET_IME]
-	bl sub_00E0
+	bl InitSystemStack
 	adr r0, sub_0300
 	str r0, [sp, #0xfc]
-	ldr r0, _027C @=sub_1928
+	ldr r0, _027C @=DoSystemBoot
 	adr lr, swi_SoftReset
 	bx r0
 
@@ -97,7 +97,7 @@ swi_HardReset: @ 0x0000008C
 swi_SoftReset: @ 0x000000B4
 	mov r4, #0x04000000
 	ldrb r2, [r4, #-6]
-	bl sub_00E0
+	bl InitSystemStack
 	cmp r2, #0 @ Test whether we are in a multiboot state
 	ldmdb r4, {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12}
 	movne lr, #EWRAM
@@ -107,8 +107,8 @@ swi_SoftReset: @ 0x000000B4
 	mov r0, #0
 	bx lr
 
-	ARM_FUNC_START sub_00E0
-sub_00E0:
+	ARM_FUNC_START InitSystemStack
+InitSystemStack:
 	mov r0, #0xd3
 	msr cpsr_fc, r0
 	ldr sp, _01C0 @=IWRAM_END - 0x20
@@ -169,13 +169,16 @@ swi_complete: @ 0x00000170
 	pop {r11, r12, lr}
 	movs pc, lr
 
-	ARM_FUNC_START SwitchToCGBMode
-SwitchToCGBMode:
+	ARM_FUNC_START DoSwitchToCGBMode
+	@ Function does not return
+DoSwitchToCGBMode:
 	mov r12, #REG_DISPCNT
 	mov r2, #DISPCNT_BG2_ON >> 8
 	strb r2, [r12, #1]
 	mov r2, #DISPCNT_CGB_MODE
 	strb r2, [r12]
+
+	ARM_FUNC_START swi_Halt
 swi_Halt:
 	mov r2, #0
 	b swi_CustomHalt
@@ -240,11 +243,12 @@ swi_branch_table:
 
 _0274: .4byte 0x09FE2000
 _0278: .4byte 0x09FFC000
-_027C: .4byte sub_1928
+_027C: .4byte DoSystemBoot
 _0280: .4byte 0xFFFFFE00
 
-	THUMB_FUNC_START sub_0284
-sub_0284: @ 0x00000284
+	THUMB_FUNC_START SwitchToCGBMode
+	@ Function does not return
+SwitchToCGBMode: @ 0x00000284
 	movs r4, #REG_BASE >> 24
 	lsls r4, r4, #0x18
 	movs r5, #PLTT >> 24
@@ -296,7 +300,7 @@ _02C6:
 	str r6, [r4, #4]
 	ldr r1, _02F0 @=0x85006000
 	str r1, [r4, #8]
-	bl SwitchToCGBMode_t
+	bl DoSwitchToCGBMode_t
 	.align 2, 0
 _02F0: .4byte 0x85006000
 _02F4: .4byte 0xFFFFD800
@@ -917,8 +921,8 @@ _085C:
 _0872:
 	pop {r4, r5, pc}
 
-	THUMB_FUNC_START sub_0874
-sub_0874: @ 0x00000874
+	THUMB_FUNC_START ReadLogos
+ReadLogos: @ 0x00000874
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x14
 	ldr r1, _0AF0 @=gUnknown_30C0 @ 512, 2, 8, 0
@@ -2842,8 +2846,8 @@ _18E6:
 _1920: .4byte 0xFF000000
 _1924: .4byte gUnknown_3104
 
-	THUMB_FUNC_START sub_1928
-sub_1928: @ 0x00001928
+	THUMB_FUNC_START DoSystemBoot
+DoSystemBoot: @ 0x00001928
 	push {r4, r5, r6, r7, lr}
 	sub sp, #0x34
 	movs r1, #0
@@ -2852,26 +2856,29 @@ sub_1928: @ 0x00001928
 	movs r0, #0x10
 	str r0, [sp, #0xc]
 	mvns r7, r1
-	movs r0, #0xff
+	movs r0, #0xff  @ RESET_ALL
 	str r1, [sp, #0x10]
 	str r1, [sp]
 	bl swi_RegisterRamReset
-	ldr r0, _1D2C @=0x04000300
+	ldr r0, _1D2C @=REG_POSTFLG
 	movs r5, #1
 	strb r5, [r0]
 	movs r0, #1
 	bl swi_SoundBiasChange
+	@ Turn on VBlank interrupt
 	ldr r6, _1D30 @=REG_IE
-	movs r0, #8
+	movs r0, #8  @ REG_DISPCNT >> 23
 	lsls r1, r0, #0x17
-	strh r5, [r6]
-	strh r0, [r1, #4]
-	ldrh r0, [r6, #4]
+	strh r5, [r6]  @ INTR_FLAG_VBLANK
+	strh r0, [r1, #REG_OFFSET_DISPSTAT]  @ VBLANK_INTR_ENABLE
+	@ Test for CGB
+	ldrh r0, [r6, #REG_OFFSET_WAITCNT - REG_OFFSET_IE]
 	lsrs r0, r0, #0xf
 	beq _1962
-	bl sub_0284
+	bl SwitchToCGBMode
+	@ noreturn
 _1962:
-	bl sub_0874
+	bl ReadLogos
 	movs r0, #0xef
 	lsls r0, r0, #7
 	movs r1, #1
@@ -3365,7 +3372,7 @@ _1D16:
 _1D2A: @ 0x00001D2A
 	b _1DA4
 	.align 2, 0
-_1D2C: .4byte 0x04000300
+_1D2C: .4byte REG_POSTFLG
 _1D30: .4byte REG_IE
 _1D34: .4byte 0x10003F5F
 _1D38: .4byte REG_WIN0H
@@ -4728,7 +4735,7 @@ gUnknown_36EC:
 	.byte  0,  0
 
 	THUMB_INTERWORK_VENEER swi_Halt
-	THUMB_INTERWORK_VENEER SwitchToCGBMode
+	THUMB_INTERWORK_VENEER DoSwitchToCGBMode
 	THUMB_INTERWORK_VENEER swi_DivArm
 	THUMB_INTERWORK_VENEER swi_VBlankIntrWait
 	THUMB_INTERWORK_VENEER swi_ObjAffineSet
