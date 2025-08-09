@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdint>
-#include <map>
 #include <vector>
 #include <string>
 #include "ramscrgen.h"
@@ -10,6 +9,8 @@
 #define SHN_COMMON 0xFFF2
 
 static std::string s_elfPath;
+static std::string s_archiveFilePath;
+static std::string s_archiveObjectPath;
 
 static FILE *s_file;
 
@@ -20,8 +21,10 @@ static int s_shstrtabIndex;
 
 static std::uint32_t s_symtabOffset;
 static std::uint32_t s_strtabOffset;
+static std::uint32_t s_pseudoCommonSectionIndex;
 
 static std::uint32_t s_symbolCount;
+static std::uint32_t s_elfFileOffset;
 
 struct Symbol
 {
@@ -31,7 +34,7 @@ struct Symbol
 
 static void Seek(long offset)
 {
-    if (std::fseek(s_file, offset, SEEK_SET) != 0)
+    if (std::fseek(s_file, s_elfFileOffset + offset, SEEK_SET) != 0)
         FATAL_ERROR("error: failed to seek to %ld in \"%s\"", offset, s_elfPath.c_str());
 }
 
@@ -120,6 +123,7 @@ static void FindTableOffsets()
 {
     s_symtabOffset = 0;
     s_strtabOffset = 0;
+    s_pseudoCommonSectionIndex = 0;
 
     Seek(s_sectionHeaderOffset + s_sectionHeaderEntrySize * s_shstrtabIndex + 0x10);
     std::uint32_t shstrtabOffset = ReadInt32();
@@ -143,6 +147,11 @@ static void FindTableOffsets()
                 FATAL_ERROR("error: mutiple .strtab sections found in \"%s\"\n", s_elfPath.c_str());
             Seek(s_sectionHeaderOffset + s_sectionHeaderEntrySize * i + 0x10);
             s_strtabOffset = ReadInt32();
+        } else if (name == "common_data") {
+            if (s_pseudoCommonSectionIndex) {
+                FATAL_ERROR("error: mutiple common_data sections found in \"%s\"\n", s_elfPath.c_str());
+            }
+            s_pseudoCommonSectionIndex = i;
         }
     }
 
@@ -153,43 +162,56 @@ static void FindTableOffsets()
         FATAL_ERROR("error: couldn't find .strtab section in \"%s\"\n", s_elfPath.c_str());
 }
 
-std::map<std::string, std::uint32_t> GetCommonSymbols(std::string path)
+static std::vector<std::pair<std::string, std::uint32_t>> GetCommonSymbols_Shared()
 {
-    s_elfPath = path;
+    VerifyElfIdent();
+    ReadElfHeader();
+    FindTableOffsets();
 
-    std::map<std::string, std::uint32_t> commonSymbols;
+    std::vector<std::pair<std::string, std::uint32_t>> commonSymbols;
 
+    if (s_pseudoCommonSectionIndex) {
+        std::vector<Symbol> commonSymbolVec;
+    
+        Seek(s_symtabOffset);
+    
+        for (std::uint32_t i = 0; i < s_symbolCount; i++)
+        {
+            Symbol sym;
+            sym.nameOffset = ReadInt32();
+            Skip(4);
+            sym.size = ReadInt32();
+            Skip(2);
+            std::uint16_t sectionIndex = ReadInt16();
+            if (sectionIndex == s_pseudoCommonSectionIndex)
+                commonSymbolVec.push_back(sym);
+        }
+    
+        for (const Symbol& sym : commonSymbolVec)
+        {
+            Seek(s_strtabOffset + sym.nameOffset);
+            std::string name = ReadString();
+            if (name == "$d" || name == "") {
+                continue;
+            }
+            commonSymbols.emplace_back(name, sym.size);
+        }
+    }
+
+    return commonSymbols;
+}
+
+std::vector<std::pair<std::string, std::uint32_t>> GetCommonSymbols(std::string sourcePath, std::string path)
+{
+    s_elfFileOffset = 0;
+    if (path[0] == '*')
+        FATAL_ERROR("error: library common syms are unsupported (filename: \"%s\")\n", path.c_str());
+
+    s_elfPath = sourcePath + "/" + path;
     s_file = std::fopen(s_elfPath.c_str(), "rb");
 
     if (s_file == NULL)
         FATAL_ERROR("error: failed to open \"%s\" for reading\n", path.c_str());
 
-    VerifyElfIdent();
-    ReadElfHeader();
-    FindTableOffsets();
-    
-    std::vector<Symbol> commonSymbolVec;
-
-    Seek(s_symtabOffset);
-
-    for (std::uint32_t i = 0; i < s_symbolCount; i++)
-    {
-        Symbol sym;
-        sym.nameOffset = ReadInt32();
-        Skip(4);
-        sym.size = ReadInt32();
-        Skip(2);
-        std::uint16_t sectionIndex = ReadInt16();
-        if (sectionIndex == SHN_COMMON)
-            commonSymbolVec.push_back(sym);
-    }
-
-    for (const Symbol& sym : commonSymbolVec)
-    {
-        Seek(s_strtabOffset + sym.nameOffset);
-        std::string name = ReadString();
-        commonSymbols[name] = sym.size;
-    }
-
-    return commonSymbols;
+    return GetCommonSymbols_Shared();
 }

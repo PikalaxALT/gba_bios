@@ -27,3 +27,6 @@ Thumbs.db
 
 # Jetbrains IDE
 .idea/
+
+# agbcc
+tools/agbcc

@@ -27,53 +27,24 @@
 
 void HandleCommonInclude(std::string filename, std::string sourcePath, std::string symOrderPath, std::string lang)
 {
-    auto commonSymbols = GetCommonSymbols(sourcePath + "/" + filename);
+    auto commonSymbols = GetCommonSymbols(sourcePath, filename);
 
-    std::size_t dotIndex = filename.find_last_of('.');
-
-    if (dotIndex == std::string::npos)
-        FATAL_ERROR("error: \"%s\" doesn't have a file extension\n", filename.c_str());
-
-    std::string symOrderFilename = filename.substr(0, dotIndex + 1) + "txt";
-
-    SymFile symFile(symOrderPath + "/" + symOrderFilename);
-
-    while (!symFile.IsAtEnd())
+    for (const auto& commonSym : commonSymbols)
     {
-        symFile.HandleLangConditional(lang);
+        unsigned long size = commonSym.second;
 
-        std::string label = symFile.GetLabel(false);
-
-        if (label.length() == 0)
-        {
-            unsigned long length;
-            if (symFile.ReadInteger(length))
-            {
-                if (length & 3)
-                    symFile.RaiseWarning("gap length %d is not multiple of 4", length);
-                printf(". += 0x%lX;\n", length);
-            }
-        }
-        else
-        {
-            if (commonSymbols.count(label) == 0)
-                symFile.RaiseError("no common symbol named \"%s\"", label.c_str());
-            unsigned long size = commonSymbols[label];
-            int alignment = 4;
-            if (size > 4)
-                alignment = 8;
-            if (size > 8)
-                alignment = 16;
-            printf(". = ALIGN(%d);\n", alignment);
-            printf("%s = .;\n", label.c_str());
-            printf(". += 0x%lX;\n", size);
-        }
-
-        symFile.ExpectEmptyRestOfLine();
+        int alignment = 4;
+        if (size > 4)
+            alignment = 8;
+        if (size > 8)
+            alignment = 16;
+        printf(". = ALIGN(%d);\n", alignment);
+        printf("%s = .;\n", commonSym.first.c_str());
+        printf(". += 0x%lX;\n", size);
     }
 }
 
-void ConvertSymFile(std::string filename, std::string sectionName, std::string lang, bool common, std::string sourcePath, std::string commonSymPath)
+void ConvertSymFile(std::string filename, std::string sectionName, std::string lang, bool common, std::string sourcePath, std::string commonSymPath, std::string libSourcePath)
 {
     SymFile symFile(filename);
 
@@ -91,7 +62,7 @@ void ConvertSymFile(std::string filename, std::string sectionName, std::string l
             symFile.ExpectEmptyRestOfLine();
             printf(". = ALIGN(4);\n");
             if (common)
-                HandleCommonInclude(incFilename, sourcePath, commonSymPath, lang);
+                HandleCommonInclude(incFilename, incFilename[0] == '*' ? libSourcePath : sourcePath, commonSymPath, lang);
             else
                 printf("%s(%s);\n", incFilename.c_str(), sectionName.c_str());
             break;
@@ -148,6 +119,7 @@ int main(int argc, char **argv)
     std::string lang = std::string(argv[3]);
     std::string sourcePath;
     std::string commonSymPath;
+    std::string libSourcePath;
 
     if (argc > 4)
     {
@@ -166,8 +138,15 @@ int main(int argc, char **argv)
 
         sourcePath = paths.substr(0, commaPos);
         commonSymPath = paths.substr(commaPos + 1);
+        commaPos = commonSymPath.find(',');
+        if (commaPos == std::string::npos) {
+            libSourcePath = "tools/agbcc/lib";
+        } else {
+            libSourcePath = commonSymPath.substr(commaPos + 1);
+            commonSymPath = commonSymPath.substr(0, commaPos);
+        }
     }
 
-    ConvertSymFile(symFileName, sectionName, lang, common, sourcePath, commonSymPath);
+    ConvertSymFile(symFileName, sectionName, lang, common, sourcePath, commonSymPath, libSourcePath);
     return 0;
 }
